@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aztec Auction Intelligence</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="marquee-container">
+        <div class="marquee-content">
+            $AZTEC TOKEN SALE IS LIVE &nbsp;&nbsp; $AZTEC TOKEN SALE IS LIVE &nbsp;&nbsp; $AZTEC TOKEN SALE IS LIVE
+            &nbsp;&nbsp; $AZTEC TOKEN SALE IS LIVE &nbsp;&nbsp; $AZTEC TOKEN SALE IS LIVE &nbsp;&nbsp; $AZTEC TOKEN SALE
+            IS LIVE &nbsp;&nbsp; $AZTEC TOKEN SALE IS LIVE &nbsp;&nbsp; $AZTEC TOKEN SALE IS LIVE &nbsp;&nbsp;
+        </div>
+    </div>
+
+    <div class="container">
+        <header>
+            <div>
+                <div class="live-badge">● Public Auction Live</div>
+                <h1>Aztec <span style="font-family: 'EB Garamond'; font-style: italic;">Intelligence</span></h1>
+            </div>
+            <div class="subtitle">
+                On-Chain Commitment Analysis<br>
+                Dec 2 — Dec 6, 2025
+            </div>
+        </header>
+
+        <div class="stats-grid">
+            <div class="stat-card primary">
+                <div class="stat-label">Total Active Commitments</div>
+                <div class="stat-value">16,331</div>
+                <div class="stat-unit">ETH</div>
+                <div style="margin-top: 20px; font-family: var(--font-mono); font-size: 0.8rem;">
+                    Updated: Last 200k Blocks
+                </div>
+            </div>
+            <div class="stat-card secondary">
+                <div class="stat-label">Market Demand</div>
+                <div class="stat-value" style="color: var(--color-orchid);">5,229</div>
+                <div class="stat-unit">ETH</div>
+                <div class="stat-label" style="margin-top: auto;">> 10M ETH FDV</div>
+            </div>
+            <div class="stat-card tertiary">
+                <div class="stat-label">Limit Demand</div>
+                <div class="stat-value">11,102</div>
+                <div class="stat-unit">ETH</div>
+                <div class="stat-label" style="margin-top: auto;">Price Sensitive</div>
+            </div>
+        </div>
+
+        <section class="viz-section">
+            <div class="viz-container">
+                <div class="viz-title">Market Structure</div>
+                <div class="bar-chart">
+                    <div class="bar-group">
+                        <div class="bar-value">32%</div>
+                        <div class="bar market" style="height: 32%;"></div>
+                        <div class="bar-label">Market</div>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar-value">68%</div>
+                        <div class="bar limit" style="height: 68%;"></div>
+                        <div class="bar-label">Limit</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="viz-container"
+                style="display: flex; flex-direction: column; justify-content: center; align-items: center; background: var(--color-lapis); color: var(--color-parchment);">
+                <div style="font-family: var(--font-heading-h1); font-size: 4rem; line-height: 1;">32.0%</div>
+                <div style="font-family: var(--font-heading-h2); margin-top: 10px; color: var(--color-aqua);">"Sticky"
+                    Floor</div>
+                <p
+                    style="font-family: var(--font-body); margin-top: 20px; text-align: center; max-width: 300px; font-size: 0.9rem; opacity: 0.8;">
+                    Market bids effectively guarantee volume regardless of clearing price, setting the hard floor for
+                    auction success.
+                </p>
+            </div>
+        </section>
+
+        <section class="feed-section">
+            <h2 class="feed-title">Recent Commitments</h2>
+            <ul class="feed-list" id="feed-list">
+                <!-- Javascript will populate this manually to demonstrate -->
+                <li class="feed-item">
+                    <span class="feed-time">Block 23946045</span>
+                    <span class="feed-amount">150.0 ETH</span>
+                    <span class="feed-type market-tag">MARKET</span>
+                </li>
+                <li class="feed-item">
+                    <span class="feed-time">Block 23945982</span>
+                    <span class="feed-amount">2.5 ETH</span>
+                    <span class="feed-type limit-tag">LIMIT</span>
+                </li>
+                <li class="feed-item">
+                    <span class="feed-time">Block 23945820</span>
+                    <span class="feed-amount">10.0 ETH</span>
+                    <span class="feed-type limit-tag">LIMIT</span>
+                </li>
+                <li class="feed-item">
+                    <span class="feed-time">Block 23945511</span>
+                    <span class="feed-amount">500.0 ETH</span>
+                    <span class="feed-type market-tag">MARKET</span>
+                </li>
+            </ul>
+        </section>
+    </div>
+
+    <footer></footer>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
