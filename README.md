@@ -9,7 +9,7 @@
 ## Objective
 Provide transparency on "Total Active Commitments" (Open Interest) for the [Polymarket Event](https://polymarket.com/event/aztec-public-sale-total-commitments).
 
-**[Open Live Dashboard](https://aztec-analysis.vercel.app/)** | **[Read About the Project](ABOUT.md)**
+**[View Source on GitHub](https://github.com/b1rdmania/aztec-auction-analysis)** | **[Read About the Project](ABOUT.md)**
 
 ---
 
