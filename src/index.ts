@@ -28,51 +28,96 @@ async function main() {
         const currentBlock = await provider.getBlockNumber();
         console.log(`Current Block: ${currentBlock}`);
 
-        // Look back ~200,000 blocks (approx 28 days) to cover contributor phase
-        const startBlock = currentBlock - 200000;
-        const endBlock = currentBlock;
-        const CHUNK_SIZE = 500;
+        // Cache Handling
+        const cachePath = path.join(__dirname, 'events_cache.json');
+        let cachedData = { lastBlock: 0, bidEvents: [] as any[], exitEvents: [] as any[] };
 
-        const bidEvents: any[] = [];
-        const exitEvents: any[] = [];
+        if (fs.existsSync(cachePath)) {
+            try {
+                const rawCache = fs.readFileSync(cachePath, 'utf8');
+                cachedData = JSON.parse(rawCache);
+                console.log(`Loaded cached events up to block ${cachedData.lastBlock}`);
+                console.log(`Cached Bids: ${cachedData.bidEvents.length}, Cached Exits: ${cachedData.exitEvents.length}`);
+            } catch (e) {
+                console.error("Cache corrupted, starting fresh.");
+            }
+        }
+
+        // Determine start block
+        // If we have cache, start from cache.lastBlock + 1
+        // If not, look back 200k blocks (approx 28 days)
+        let startBlock = cachedData.lastBlock > 0 ? cachedData.lastBlock + 1 : currentBlock - 200000;
+        const endBlock = currentBlock;
+
+        // If older than lookback, reset to lookback (safety) unless we trust cache fully. 
+        // We trust cache.
+
+        const CHUNK_SIZE = 2000; // Increased chunk size to reduce request count
+
+        // We will append to these
+        const bidEvents = [...cachedData.bidEvents];
+        const exitEvents = [...cachedData.exitEvents];
 
         const bidFilter = contract.filters.BidSubmitted();
         const exitFilter = contract.filters.BidExited();
 
-        console.log(`Querying events from ${startBlock} to ${endBlock} in chunks of ${CHUNK_SIZE}...`);
+        if (startBlock > endBlock) {
+            console.log("Cache is up to date.");
+        } else {
+            console.log(`Querying events from ${startBlock} to ${endBlock} in chunks of ${CHUNK_SIZE}...`);
 
-        for (let from = startBlock; from <= endBlock; from += CHUNK_SIZE) {
-            const to = Math.min(from + CHUNK_SIZE - 1, endBlock);
-            if (from % (CHUNK_SIZE * 10) === 0) process.stdout.write('.');
+            for (let from = startBlock; from <= endBlock; from += CHUNK_SIZE) {
+                const to = Math.min(from + CHUNK_SIZE - 1, endBlock);
+                if (from % (CHUNK_SIZE * 5) === 0) process.stdout.write('.');
 
-            try {
-                // Fetch Bids
-                const bids = await contract.queryFilter(bidFilter, from, to);
-                bidEvents.push(...bids);
-
-                // Fetch Exits
-                const exits = await contract.queryFilter(exitFilter, from, to);
-                exitEvents.push(...exits);
-
-                // Small delay to be nice to RPC
-                await new Promise(r => setTimeout(r, 100));
-            } catch (e) {
-                // Retry once
                 try {
-                    await new Promise(r => setTimeout(r, 500));
+                    // Fetch Bids
                     const bids = await contract.queryFilter(bidFilter, from, to);
-                    bidEvents.push(...bids);
+                    // Simplify events for storage (remove circular refs etc if needed, but ethers objects usually fine if serialized carefully)
+                    // We map them to plain objects to be safe for JSON
+                    const plainBids = bids.map((e: any) => ({
+                        args: e.args,
+                        blockNumber: e.blockNumber,
+                        transactionHash: e.transactionHash,
+                        logIndex: e.logIndex
+                    }));
+                    bidEvents.push(...plainBids);
+
+                    // Fetch Exits
                     const exits = await contract.queryFilter(exitFilter, from, to);
-                    exitEvents.push(...exits);
-                } catch (retryE) {
-                    console.error(`  Failed chunk ${from}-${to}. Skipping.`);
+                    const plainExits = exits.map((e: any) => ({
+                        args: e.args,
+                        blockNumber: e.blockNumber,
+                        transactionHash: e.transactionHash,
+                        logIndex: e.logIndex
+                    }));
+                    exitEvents.push(...plainExits);
+
+                    // Small delay to be nice to RPC
+                    await new Promise(r => setTimeout(r, 200));
+
+                    // Progressive Cache Save (every chunk or so? maybe every 10 chunks)
+                    // Helper for BigInt serialization
+                    const replacer = (key: string, value: any) =>
+                        typeof value === 'bigint' ? value.toString() : value;
+
+                    fs.writeFileSync(cachePath, JSON.stringify({
+                        lastBlock: to,
+                        bidEvents: bidEvents,
+                        exitEvents: exitEvents
+                    }, replacer, 2));
+
+                } catch (e) {
+                    console.error(`\nFailed chunk ${from}-${to}. Stopping here to preserve cache.`);
+                    console.error(e);
+                    break; // Stop fetching, but proceed with analysis of what we have!
                 }
             }
         }
         console.log('\nDone fetching.');
 
-        console.log(`Found ${bidEvents.length} distinct bid submissions.`);
-        console.log(`Found ${exitEvents.length} exit events.`);
+        console.log(`Total Bid Events: ${bidEvents.length}`);
+        console.log(`Total Exit Events: ${exitEvents.length}`);
 
         // Map exits by bidId
         const refundsDetails = new Map<string, bigint>();
