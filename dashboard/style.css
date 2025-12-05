@@ -14,10 +14,12 @@
 
     /* Typography */
     --font-heading-h1: 'Martel', serif;
-    --font-heading-h2: 'Space Mono', monospace; /* Geist Mono substitute */
+    --font-heading-h2: 'Space Mono', monospace;
+    /* Geist Mono substitute */
     --font-heading-h3: 'Workbench', sans-serif;
     --font-heading-h4: 'EB Garamond', serif;
-    --font-body: 'Martel', serif; /* Using Martel as generic body serif to match vibe */
+    --font-body: 'Martel', serif;
+    /* Using Martel as generic body serif to match vibe */
     --font-mono: 'Space Mono', monospace;
 }
 
@@ -56,7 +58,8 @@ header {
 
 h1 {
     font-family: var(--font-heading-h1);
-    font-weight: 200; /* Light */
+    font-weight: 200;
+    /* Light */
     font-size: 5rem;
     line-height: 0.9;
     letter-spacing: -0.05em;
@@ -140,7 +143,7 @@ h1 {
     font-family: var(--font-heading-h2);
 }
 
-/* Visualization Section */
+/* Visualization Section - Wilder Design */
 .viz-section {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -149,83 +152,100 @@ h1 {
 }
 
 .viz-container {
-    border: 1px solid var(--color-ink);
+    border: 3px solid var(--color-ink);
     padding: 20px;
-    height: 400px;
+    height: 450px;
     position: relative;
-    background: repeating-linear-gradient(
-        45deg,
-        var(--color-parchment),
-        var(--color-parchment) 10px,
-        #ebe7da 10px,
-        #ebe7da 20px
-    );
+    background-color: var(--color-ink);
+    /* Dark Mode */
+    color: var(--color-parchment);
+    box-shadow: 10px 10px 0px var(--color-vermillion);
+    /* Aggressive shadow */
 }
 
 .viz-title {
-    font-family: var(--font-heading-h4);
-    font-size: 2rem;
-    margin-bottom: 20px;
-    border-bottom: 1px dashed var(--color-ink);
-    padding-bottom: 10px;
+    font-family: var(--font-heading-h1);
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+    border-bottom: 1px dashed var(--color-chartreuse);
+    padding-bottom: 15px;
+    color: var(--color-chartreuse);
 }
 
-/* Bar Chart Simple Implementation */
+/* Bar Chart Fix & Style */
 .bar-chart {
     display: flex;
     height: 300px;
     align-items: flex-end;
-    gap: 40px;
-    padding: 20px;
+    /* Aligns items to bottom */
+    gap: 60px;
+    padding: 20px 40px;
 }
 
 .bar-group {
     flex: 1;
     display: flex;
     flex-direction: column;
+    justify-content: flex-end;
+    /* Pushes content to bottom */
+    height: 100%;
+    /* CRITICAL FIX for percentage heights */
     align-items: center;
     gap: 10px;
 }
 
 .bar {
     width: 100%;
-    background-color: var(--color-ink);
-    transition: height 1s ease-out;
+    background-color: #333;
+    transition: height 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    /* Bouncy */
     position: relative;
-    border: 1px solid var(--color-ink);
+    border: 2px solid var(--color-parchment);
+    min-height: 2px;
+    /* Ensure visibility even if 0 */
 }
 
 .bar.market {
     background-color: var(--color-orchid);
-    box-shadow: 10px -10px 0px rgba(0,0,0,0.1);
+    box-shadow: 0px 0px 20px var(--color-orchid);
+    /* Neon Glow */
+    border: none;
 }
 
 .bar.limit {
-    background-color: var(--color-chartreuse);
-    box-shadow: 10px -10px 0px rgba(0,0,0,0.1);
+    background-color: var(--color-aqua);
+    box-shadow: 0px 0px 20px var(--color-aqua);
+    /* Neon Glow */
+    border: none;
 }
 
 .bar-value {
     font-family: var(--font-mono);
     font-weight: bold;
+    font-size: 1.2rem;
+    color: var(--color-parchment);
+    margin-bottom: 5px;
 }
 
 .bar-label {
     font-family: var(--font-heading-h2);
     text-transform: uppercase;
-    margin-top: 10px;
+    margin-top: 15px;
+    font-size: 1.2rem;
+    letter-spacing: 2px;
 }
 
 /* Latest Feed */
 .feed-section {
-    border-top: 2px solid var(--color-ink);
-    padding-top: 40px;
+    border-top: 4px solid var(--color-ink);
+    padding-top: 60px;
 }
 
 .feed-title {
     font-family: var(--font-heading-h1);
-    font-size: 3rem;
+    font-size: 4rem;
     margin-bottom: 40px;
+    color: var(--color-ink);
 }
 
 .feed-list {
@@ -234,38 +254,53 @@ h1 {
 }
 
 .feed-item {
-    border-bottom: 1px solid rgba(26, 20, 0, 0.2);
-    padding: 15px 0;
+    border-bottom: 2px solid var(--color-ink);
+    padding: 20px 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    transition: all 0.2s;
 }
 
 .feed-item:hover {
-    background-color: rgba(212, 255, 40, 0.2); /* Chartreuse tint */
-    padding-left: 10px;
-    transition: all 0.2s;
+    background-color: var(--color-ink);
+    color: var(--color-chartreuse);
+    padding-left: 20px;
+    transform: scale(1.01);
+}
+
+.feed-item:hover .feed-time {
+    color: var(--color-chartreuse);
 }
 
 .feed-time {
     color: var(--color-aubergine);
-    font-size: 0.9rem;
+    font-size: 1rem;
 }
 
 .feed-amount {
     font-weight: bold;
+    font-size: 1.2rem;
 }
 
 .feed-type {
-    padding: 4px 8px;
-    font-size: 0.8rem;
+    padding: 6px 12px;
+    font-size: 0.9rem;
+    font-weight: bold;
     text-transform: uppercase;
-    border: 1px solid var(--color-ink);
+    border: 2px solid var(--color-ink);
+}
+
+.feed-item:hover .feed-type {
+    border-color: var(--color-chartreuse);
+    color: var(--color-ink);
+    background: var(--color-chartreuse);
 }
 
 .market-tag {
     background-color: var(--color-orchid);
     color: var(--color-parchment);
+    border: none;
 }
 
 .limit-tag {
@@ -277,27 +312,72 @@ h1 {
     background-color: var(--color-ink);
     color: var(--color-chartreuse);
     overflow: hidden;
-    padding: 10px 0;
+    padding: 15px 0;
     font-family: var(--font-heading-h2);
     text-transform: uppercase;
     white-space: nowrap;
     position: fixed;
     bottom: 0;
     width: 100%;
-    z-index: 100;
+    z-index: 1000;
+    border-top: 2px solid var(--color-chartreuse);
 }
 
 .marquee-content {
     display: inline-block;
     animation: scroll 20s linear infinite;
+    font-size: 1.2rem;
+    font-weight: bold;
 }
 
 @keyframes scroll {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
 }
 
 /* Footer styling spacer for marquee */
 footer {
-    height: 60px;
+    height: 80px;
+}
+
+/* Modal Styles Moved from Inline */
+#modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(26, 20, 0, 0.85);
+    /* Darker overlay */
+    z-index: 2000;
+    /* High Z */
+    backdrop-filter: blur(5px);
+}
+
+#methodology-modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--color-parchment);
+    border: 4px solid var(--color-ink);
+    padding: 40px;
+    width: 90%;
+    max-width: 800px;
+    z-index: 2001;
+    /* Above overlay */
+    box-shadow: 20px 20px 0px var(--color-vermillion);
+}
+
+#methodology-modal.active,
+#modal-overlay.active {
+    display: block !important;
+    /* Force override */
 }

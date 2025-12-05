@@ -1,4 +1,3 @@
-```
 // Basic interaction or data loading can go here.
 // For now, the artifact is static based on the analysis results found in the previous step.
 
@@ -13,17 +12,21 @@ const overlay = document.getElementById('modal-overlay');
 const openBtn = document.getElementById('open-methodology');
 const closeBtn = document.getElementById('close-modal');
 
-openBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    modal.style.display = 'block';
-    overlay.style.display = 'block';
-});
+if (openBtn && modal && overlay && closeBtn) {
+    openBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        modal.classList.add('active');
+        overlay.classList.add('active');
+    });
 
-function closeModal() {
-    modal.style.display = 'none';
-    overlay.style.display = 'none';
+    function closeModal() {
+        modal.classList.remove('active');
+        overlay.classList.remove('active');
+    }
+
+    closeBtn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', closeModal);
+} else {
+    console.error("Modal elements not found!");
 }
-
-closeBtn.addEventListener('click', closeModal);
-overlay.addEventListener('click', closeModal);
 
