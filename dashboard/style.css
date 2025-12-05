@@ -381,3 +381,102 @@ footer {
     display: block !important;
     /* Force override */
 }
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+
+    /* Layout */
+    .container {
+        padding: 20px 15px;
+    }
+
+    /* Header */
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+
+    h1 {
+        font-size: 3rem;
+        /* Scale down from 5rem */
+    }
+
+    .subtitle {
+        font-size: 1rem;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+        grid-template-columns: 1fr;
+        /* Stack vertically */
+        gap: 15px;
+        margin-bottom: 40px;
+    }
+
+    .stat-card.primary,
+    .stat-card.secondary,
+    .stat-card.tertiary {
+        grid-column: span 1;
+        /* Take full width */
+        min-height: 200px;
+    }
+
+    .stat-value {
+        font-size: 3rem;
+    }
+
+    /* Viz Section */
+    .viz-section {
+        grid-template-columns: 1fr;
+        /* Stack vertically */
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+
+    .viz-container {
+        height: auto;
+        /* Let content dictate height */
+        min-height: 400px;
+    }
+
+    .viz-title {
+        font-size: 1.8rem;
+    }
+
+    /* Bar Chart */
+    .bar-chart {
+        gap: 20px;
+        /* Reduce gap */
+        padding: 20px 10px;
+    }
+
+    /* Feed */
+    .feed-title {
+        font-size: 2.5rem;
+    }
+
+    .feed-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .feed-amount {
+        font-size: 1.5rem;
+        /* Larger for readability on tap */
+    }
+
+    .feed-type {
+        align-self: flex-start;
+    }
+
+    /* Modal */
+    #methodology-modal {
+        width: 95%;
+        padding: 20px;
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+}
