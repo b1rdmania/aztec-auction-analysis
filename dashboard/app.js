@@ -9,14 +9,21 @@ async function loadData() {
         const response = await fetch('./data.json');
         const data = await response.json();
 
+        // Format Date
+        const dateStr = new Date(data.lastUpdated).toUTCString();
+
+        // Update Header Timestamp
+        const headerTs = document.getElementById('timestamp');
+        if (headerTs) headerTs.textContent = dateStr;
+
         // Update Stats
-        document.querySelector('.stat-card.primary .stat-value').textContent = data.stats.totalEth;
-        document.querySelector('.stat-card.primary div[style*="font-size: 0.8rem"]').textContent = `Updated: ${ new Date(data.lastUpdated).toLocaleString() } `;
+        document.getElementById('val-total').textContent = data.stats.totalEth;
+        document.getElementById('val-market').textContent = data.stats.marketEth;
+        document.getElementById('val-limit').textContent = data.stats.limitEth;
 
-        document.querySelector('.stat-card.secondary .stat-value').textContent = data.stats.marketEth;
-        // document.querySelector('.stat-card.secondary .stat-label:last-child').textContent = `> 10M ETH FDV`;
-
-        document.querySelector('.stat-card.tertiary .stat-value').textContent = data.stats.limitEth;
+        // Update Note
+        const note = document.querySelector('.stat-note');
+        if (note) note.textContent = `Scanned 200k Blocks.Refreshed: ${ dateStr } `;
 
         // Update Chart
         document.querySelector('.bar-group:nth-child(1) .bar-value').textContent = `${ data.stats.marketShare }% `;
