@@ -3,8 +3,8 @@ import { CCA_ABI, CCA_CONTRACT_ADDRESS, calculateFDV, q96ToEthPrice } from './ut
 import * as fs from 'fs';
 import * as path from 'path';
 
-// Use a public RPC - 1RPC
-const RPC_URL = 'https://1rpc.io/eth';
+// Use a public RPC - Flashbots
+const RPC_URL = 'https://rpc.flashbots.net';
 
 async function main() {
     console.log('Starting Aztec Auction Analysis...');
@@ -19,6 +19,7 @@ async function main() {
 
     try {
         const provider = new ethers.JsonRpcProvider(RPC_URL);
+        // const provider = ethers.getDefaultProvider('mainnet');
 
         const contract = new ethers.Contract(CCA_CONTRACT_ADDRESS, CCA_ABI, provider) as any;
 

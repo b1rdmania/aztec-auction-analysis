@@ -30,3 +30,32 @@ if (openBtn && modal && overlay && closeBtn) {
     console.error("Modal elements not found!");
 }
 
+// Countdown Logic
+// Target: Dec 6th 9pm GMT 2025
+const targetDate = new Date('2025-12-06T21:00:00Z').getTime();
+const timerElement = document.getElementById('time-remaining');
+
+function updateCountdown() {
+    if (!timerElement) return;
+
+    const now = new Date().getTime();
+    const distance = targetDate - now;
+
+    if (distance < 0) {
+        timerElement.innerHTML = "AUCTION ENDED";
+        timerElement.style.color = "var(--color-ink)";
+        return;
+    }
+
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+    // Format: 01d 04h 20m 33s
+    timerElement.innerText = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+}
+
+setInterval(updateCountdown, 1000);
+updateCountdown(); // Initial call
+
