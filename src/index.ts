@@ -184,7 +184,7 @@ async function main() {
     console.log(`Market Bids (> ${MARKET_THRESHOLD_ETH_FDV.toLocaleString()} ETH FDV): ${ethers.formatEther(marketSum)} ETH`);
     console.log(`Limit Bids: ${ethers.formatEther(limitSum)} ETH`);
 
-    // CSV Output for deeper inspection (optional but good for artifact)
+    // CSV Output for deeper inspection
     const csvContent = "Current,FDV_ETH,Amount_ETH,Category\n" +
         processedBids.map(b => `${b.netAmountWei},${b.fdvEth},${ethers.formatEther(b.netAmountWei)},${b.category}`).join('\n');
 
@@ -195,6 +195,43 @@ async function main() {
     }
     fs.writeFileSync(path.join(outDir, 'bids_analysis.csv'), csvContent);
     console.log(`Detailed CSV written to output/bids_analysis.csv`);
+
+    // JSON Output for Dashboard
+    const dashboardDir = path.join(__dirname, '../dashboard');
+    if (!fs.existsSync(dashboardDir)) {
+        fs.mkdirSync(dashboardDir);
+    }
+
+    const totalEth = parseFloat(ethers.formatEther(netTotal));
+    const marketEth = parseFloat(ethers.formatEther(marketSum));
+    const limitEth = parseFloat(ethers.formatEther(limitSum));
+    const marketShare = (marketEth / totalEth) * 100;
+    const limitShare = (limitEth / totalEth) * 100;
+
+    // specific formatting for recent bids
+    // We want the LAST added bids (most recent block numbers).
+    // Note: Event fetching was chronological (startBlock to endBlock).
+    // So distinct bids are roughly chronological. Reversing gives most recent.
+    const recentBids = processedBids.slice().reverse().slice(0, 10).map(b => ({
+        amount: parseFloat(ethers.formatEther(b.netAmountWei)).toFixed(2),
+        category: b.category,
+        id: b.id
+    }));
+
+    const dashboardData = {
+        lastUpdated: new Date().toISOString(),
+        stats: {
+            totalEth: totalEth.toLocaleString('en-US', { maximumFractionDigits: 0 }),
+            marketEth: marketEth.toLocaleString('en-US', { maximumFractionDigits: 0 }),
+            limitEth: limitEth.toLocaleString('en-US', { maximumFractionDigits: 0 }),
+            marketShare: marketShare.toFixed(1),
+            limitShare: limitShare.toFixed(1)
+        },
+        recentBids: recentBids
+    };
+
+    fs.writeFileSync(path.join(dashboardDir, 'data.json'), JSON.stringify(dashboardData, null, 2));
+    console.log(`Dashboard data written to dashboard/data.json`);
 }
 
 main().catch(error => {
