@@ -31,8 +31,8 @@ if (openBtn && modal && overlay && closeBtn) {
 }
 
 // Countdown Logic
-// Target: Dec 6th 9pm GMT 2025
-const targetDate = new Date('2025-12-06T21:00:00Z').getTime();
+// Auction End Date: Dec 6th 2025, 5:30 PM GMT
+const targetDate = new Date("2025-12-06T17:30:00.000Z").getTime();
 const timerElement = document.getElementById('time-remaining');
 
 function updateCountdown() {
