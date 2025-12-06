@@ -1,62 +1,62 @@
 {
-  "lastUpdated": "2025-12-06T15:26:04.226Z",
+  "lastUpdated": "2025-12-06T16:02:39.218Z",
   "stats": {
-    "totalEth": "18,978",
-    "marketEth": "7,871",
-    "limitEth": "11,107",
-    "marketShare": "41.5",
-    "limitShare": "58.5"
+    "totalEth": "19,146",
+    "marketEth": "8,142",
+    "limitEth": "11,004",
+    "marketShare": "42.5",
+    "limitShare": "57.5"
   },
   "recentBids": [
     {
-      "amount": "0.36",
+      "amount": "0.00",
       "category": "Market",
-      "id": "20861"
+      "id": "20938"
+    },
+    {
+      "amount": "0.10",
+      "category": "Market",
+      "id": "20937"
+    },
+    {
+      "amount": "0.01",
+      "category": "Market",
+      "id": "20936"
+    },
+    {
+      "amount": "0.49",
+      "category": "Market",
+      "id": "20935"
     },
     {
       "amount": "0.03",
       "category": "Market",
-      "id": "20860"
-    },
-    {
-      "amount": "3.05",
-      "category": "Market",
-      "id": "20859"
-    },
-    {
-      "amount": "0.03",
-      "category": "Market",
-      "id": "20857"
-    },
-    {
-      "amount": "0.99",
-      "category": "Market",
-      "id": "20855"
+      "id": "20934"
     },
     {
       "amount": "1.31",
       "category": "Market",
-      "id": "20854"
+      "id": "20933"
     },
     {
-      "amount": "0.01",
+      "amount": "3.22",
       "category": "Market",
-      "id": "20853"
+      "id": "20932"
     },
     {
       "amount": "0.03",
       "category": "Market",
-      "id": "20852"
+      "id": "20931"
     },
     {
-      "amount": "0.32",
+      "amount": "0.36",
       "category": "Market",
-      "id": "20851"
+      "id": "20930"
     },
     {
-      "amount": "0.01",
+      "amount": "0.98",
       "category": "Market",
-      "id": "20850"
+      "id": "20928"
     }
   ]
 }
