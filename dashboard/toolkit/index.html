@@ -698,7 +698,7 @@ volatility-alert trending --threshold 5</code>
         async function fetchTrending() {
             showLoading();
             try {
-                let markets = await fetchWithProxy(`${GAMMA_API}/markets?active=true`);
+                let markets = await fetchWithProxy(`${GAMMA_API}/markets?active=true&closed=false`);
 
                 // Filter: must be active, not closed, and have recent volume
                 markets = markets.filter(m => {
@@ -731,7 +731,7 @@ volatility-alert trending --threshold 5</code>
         async function fetchMovers() {
             showLoading();
             try {
-                let markets = await fetchWithProxy(`${GAMMA_API}/markets?active=true`);
+                let markets = await fetchWithProxy(`${GAMMA_API}/markets?active=true&closed=false`);
 
                 // Filter: active, not closed, not expired, high volume
                 markets = markets.filter(m => {
@@ -762,7 +762,7 @@ volatility-alert trending --threshold 5</code>
         async function fetchPolitics() {
             showLoading();
             try {
-                let markets = await fetchWithProxy(`${GAMMA_API}/markets?tag=Politics&active=true`);
+                let markets = await fetchWithProxy(`${GAMMA_API}/markets?tag=Politics&active=true&closed=false`);
 
                 // Filter: not closed, not expired, has volume
                 markets = markets.filter(m => {
