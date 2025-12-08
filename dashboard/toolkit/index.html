@@ -700,6 +700,17 @@ volatility-alert trending --threshold 5</code>
             try {
                 let markets = await fetchWithProxy(`${GAMMA_API}/markets?active=true`);
 
+                // Filter: must be active, not closed, and have recent volume
+                markets = markets.filter(m => {
+                    const isActive = m.active === true || m.active === 'true';
+                    const notClosed = !m.closed && !m.resolved;
+                    const hasVolume = parseFloat(m.volume24hr || 0) > 0;
+                    // Check end date is in the future
+                    const endDate = m.endDate ? new Date(m.endDate) : null;
+                    const notExpired = !endDate || endDate > new Date();
+                    return isActive && notClosed && hasVolume && notExpired;
+                });
+
                 // Sort by 24h volume
                 markets.sort((a, b) => {
                     const volA = parseFloat(a.volume24hr || 0);
@@ -711,7 +722,7 @@ volatility-alert trending --threshold 5</code>
                 renderMarkets(markets, '📈 Top 10 Trending Markets (24h Volume)');
             } catch (error) {
                 hideLoading();
-                showError('Failed to fetch trending markets. CORS may be blocking the request.');
+                showError('Failed to fetch trending markets: ' + error.message);
                 console.error(error);
             }
         }
@@ -722,10 +733,16 @@ volatility-alert trending --threshold 5</code>
             try {
                 let markets = await fetchWithProxy(`${GAMMA_API}/markets?active=true`);
 
-                // Filter for high volume markets (potential movers)
-                markets = markets.filter(m => parseFloat(m.volume24hr || 0) > 50000);
+                // Filter: active, not closed, not expired, high volume
+                markets = markets.filter(m => {
+                    const notClosed = !m.closed && !m.resolved;
+                    const endDate = m.endDate ? new Date(m.endDate) : null;
+                    const notExpired = !endDate || endDate > new Date();
+                    const hasHighVolume = parseFloat(m.volume24hr || 0) > 50000;
+                    return notClosed && notExpired && hasHighVolume;
+                });
 
-                // Sort by volume as proxy for activity
+                // Sort by volume
                 markets.sort((a, b) => {
                     const volA = parseFloat(a.volume24hr || 0);
                     const volB = parseFloat(b.volume24hr || 0);
@@ -746,6 +763,15 @@ volatility-alert trending --threshold 5</code>
             showLoading();
             try {
                 let markets = await fetchWithProxy(`${GAMMA_API}/markets?tag=Politics&active=true`);
+
+                // Filter: not closed, not expired, has volume
+                markets = markets.filter(m => {
+                    const notClosed = !m.closed && !m.resolved;
+                    const endDate = m.endDate ? new Date(m.endDate) : null;
+                    const notExpired = !endDate || endDate > new Date();
+                    const hasVolume = parseFloat(m.volume24hr || 0) > 0;
+                    return notClosed && notExpired && hasVolume;
+                });
 
                 // Sort by volume
                 markets.sort((a, b) => {
