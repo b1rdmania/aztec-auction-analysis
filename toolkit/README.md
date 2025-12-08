@@ -15,7 +15,7 @@ Modular, open-source tools for prediction market research and trading.
 
 ```bash
 # Clone the repo
-git clone https://github.com/yourusername/aztec-analysis.git
+git clone https://github.com/b1rdmania/aztec-auction-analysis.git
 cd aztec-analysis/toolkit
 
 # Install all tools
