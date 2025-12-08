@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction Market Intelligence</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        /* Prediction Market Specific Styles */
+        .market-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 20px;
+            margin-bottom: 60px;
+        }
+
+        .market-card {
+            border: 1px solid var(--color-ink);
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 200px;
+            transition: transform 0.2s;
+            background: var(--color-parchment);
+        }
+
+        .market-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 5px 5px 0px var(--color-ink);
+        }
+
+        .market-card.featured {
+            grid-column: span 6;
+            background-color: var(--color-ink);
+            color: var(--color-parchment);
+        }
+
+        .market-card.standard {
+            grid-column: span 3;
+        }
+
+        .market-question {
+            font-family: var(--font-heading-h1);
+            font-size: 1.4rem;
+            line-height: 1.3;
+            margin-bottom: 15px;
+        }
+
+        .market-card.featured .market-question {
+            font-size: 1.8rem;
+            color: var(--color-chartreuse);
+        }
+
+        .market-stats {
+            display: flex;
+            gap: 20px;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+        }
+
+        .market-stat {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .market-stat-label {
+            text-transform: uppercase;
+            opacity: 0.7;
+            font-size: 0.7rem;
+        }
+
+        .market-stat-value {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .market-stat-value.yes {
+            color: var(--color-malachite);
+        }
+
+        .market-card.featured .market-stat-value.yes {
+            color: var(--color-aqua);
+        }
+
+        .market-stat-value.volume {
+            color: var(--color-orchid);
+        }
+
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 60px;
+        }
+
+        .tool-card {
+            border: 2px solid var(--color-ink);
+            padding: 25px;
+            background: var(--color-parchment);
+            transition: all 0.2s;
+        }
+
+        .tool-card:hover {
+            background: var(--color-ink);
+            color: var(--color-chartreuse);
+        }
+
+        .tool-card:hover .tool-name {
+            color: var(--color-chartreuse);
+        }
+
+        .tool-emoji {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .tool-name {
+            font-family: var(--font-heading-h2);
+            font-size: 1rem;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .tool-desc {
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .demo-section {
+            background: var(--color-ink);
+            color: var(--color-parchment);
+            padding: 40px;
+            margin-bottom: 60px;
+            box-shadow: 10px 10px 0px var(--color-vermillion);
+        }
+
+        .demo-title {
+            font-family: var(--font-heading-h1);
+            font-size: 2.5rem;
+            color: var(--color-chartreuse);
+            margin-bottom: 30px;
+            border-bottom: 1px dashed var(--color-chartreuse);
+            padding-bottom: 15px;
+        }
+
+        .demo-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .demo-btn {
+            font-family: var(--font-mono);
+            text-transform: uppercase;
+            padding: 12px 24px;
+            border: 2px solid var(--color-chartreuse);
+            background: transparent;
+            color: var(--color-chartreuse);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .demo-btn:hover {
+            background: var(--color-chartreuse);
+            color: var(--color-ink);
+        }
+
+        .demo-results {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            min-height: 300px;
+            max-height: 500px;
+            overflow-y: auto;
+            font-family: var(--font-mono);
+        }
+
+        .demo-placeholder {
+            color: var(--color-chartreuse);
+            opacity: 0.6;
+            text-align: center;
+            padding: 60px;
+        }
+
+        .result-item {
+            border-bottom: 1px solid rgba(212, 255, 40, 0.2);
+            padding: 15px 0;
+        }
+
+        .result-item:hover {
+            background: rgba(212, 255, 40, 0.05);
+        }
+
+        .result-question {
+            color: var(--color-parchment);
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .result-stats {
+            display: flex;
+            gap: 20px;
+            font-size: 0.8rem;
+        }
+
+        .result-stats span {
+            color: var(--color-chartreuse);
+        }
+
+        .result-stats .vol {
+            color: var(--color-orchid);
+        }
+
+        .result-stats .prob {
+            color: var(--color-aqua);
+        }
+
+        .loading {
+            color: var(--color-chartreuse);
+            text-align: center;
+            padding: 40px;
+        }
+
+        .loading::after {
+            content: '';
+            animation: dots 1.5s infinite;
+        }
+
+        @keyframes dots {
+
+            0%,
+            20% {
+                content: '.';
+            }
+
+            40% {
+                content: '..';
+            }
+
+            60%,
+            100% {
+                content: '...';
+            }
+        }
+
+        .error-msg {
+            background: rgba(255, 26, 26, 0.2);
+            border: 1px solid var(--color-vermillion);
+            color: var(--color-vermillion);
+            padding: 20px;
+            text-align: center;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .market-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .market-card.featured,
+            .market-card.standard {
+                grid-column: span 1;
+            }
+
+            .tool-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .demo-controls {
+                flex-direction: column;
+            }
+
+            .demo-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <div class="live-badge"><span class="blink-dot">●</span> Live Data Feed</div>
+                <h1>Prediction <span style="font-family: 'EB Garamond'; font-style: italic;">Markets</span></h1>
+                <div class="subtitle">
+                    Polymarket Intelligence & Analysis Tools<br>
+                    Emotional Volatility Arbitrage
+                </div>
+            </div>
+
+            <div
+                style="margin-top: 10px; font-family: var(--font-mono); font-size: 0.8rem; display: flex; flex-direction: column; align-items: flex-end; gap: 10px; text-align: right;">
+                <div><a href="../" style="color: var(--color-ink); text-decoration: underline;">← Back to Aztec</a>
+                </div>
+                <div>
+                    <a href="https://github.com/b1rdmania/aztec-auction-analysis/tree/main/toolkit" target="_blank"
+                        class="github-btn">
+                        <svg height="16" width="16" viewBox="0 0 16 16" style="fill: currentColor; margin-right: 5px;">
+                            <path
+                                d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z">
+                            </path>
+                        </svg>
+                        Toolkit on GitHub
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Tools Grid -->
+        <section>
+            <h2 style="font-family: var(--font-heading-h1); font-size: 3rem; margin-bottom: 30px;">Toolkit</h2>
+            <div class="tool-grid">
+                <div class="tool-card">
+                    <div class="tool-emoji">📊</div>
+                    <div class="tool-name">polymarket-data</div>
+                    <div class="tool-desc">Read-only data fetcher. Search, trending, orderbooks.</div>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-emoji">🚨</div>
+                    <div class="tool-name">volatility-alerts</div>
+                    <div class="tool-desc">Real-time price movement detection & alerting.</div>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-emoji">📈</div>
+                    <div class="tool-name">mean-reversion</div>
+                    <div class="tool-desc">Trading signals based on behavioral finance research.</div>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-emoji">🐋</div>
+                    <div class="tool-name">whale-tracker</div>
+                    <div class="tool-desc">Monitor large trades and smart money wallets.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Live Demo -->
+        <section class="demo-section">
+            <div class="demo-title">Live API Demo</div>
+            <p style="margin-bottom: 20px; opacity: 0.8;">Fetching real data from Polymarket. No API keys required.</p>
+
+            <div class="demo-controls">
+                <button class="demo-btn" onclick="fetchTrending()">📈 Trending</button>
+                <button class="demo-btn" onclick="fetchMovers()">🚨 High Volume</button>
+                <button class="demo-btn" onclick="fetchPolitics()">🏛️ Politics</button>
+                <button class="demo-btn" onclick="clearResults()"
+                    style="border-color: var(--color-vermillion); color: var(--color-vermillion);">Clear</button>
+            </div>
+
+            <div id="demo-results" class="demo-results">
+                <div class="demo-placeholder">Click a button to fetch live market data...</div>
+            </div>
+        </section>
+
+        <!-- Research -->
+        <section class="feed-section">
+            <h2 class="feed-title">Research Themes</h2>
+            <ul class="feed-list">
+                <li class="feed-item">
+                    <span class="feed-time">Theme 1</span>
+                    <span class="feed-amount">Prediction Market Accuracy</span>
+                    <span class="feed-type market-tag">7 Papers</span>
+                </li>
+                <li class="feed-item">
+                    <span class="feed-time">Theme 2</span>
+                    <span class="feed-amount">Biases & In-Play Betting</span>
+                    <span class="feed-type market-tag">7 Papers</span>
+                </li>
+                <li class="feed-item">
+                    <span class="feed-time">Theme 3</span>
+                    <span class="feed-amount">Governance & Internal Control</span>
+                    <span class="feed-type limit-tag">3 Papers</span>
+                </li>
+                <li class="feed-item">
+                    <span class="feed-time">Theme 4</span>
+                    <span class="feed-amount">AI Forecasting</span>
+                    <span class="feed-type market-tag">6 Papers</span>
+                </li>
+                <li class="feed-item">
+                    <span class="feed-time">Theme 5</span>
+                    <span class="feed-amount">Corruption & Procurement</span>
+                    <span class="feed-type limit-tag">4 Papers</span>
+                </li>
+                <li class="feed-item">
+                    <span class="feed-time">Theme 6</span>
+                    <span class="feed-amount">General References</span>
+                    <span class="feed-type limit-tag">2 Papers</span>
+                </li>
+            </ul>
+        </section>
+    </div>
+
+    <footer></footer>
+
+    <div class="ticker-wrap">
+        <div class="ticker">EXPERIMENTAL PREDICTION MARKET ANALYSIS — NOT FINANCIAL ADVICE — USE AT YOUR OWN RISK —
+            EXPERIMENTAL PREDICTION MARKET ANALYSIS — NOT FINANCIAL ADVICE — USE AT YOUR OWN RISK —</div>
+    </div>
+
+    <script>
+        const GAMMA_API = 'https://gamma-api.polymarket.com';
+        const CORS_PROXY = 'https://api.allorigins.win/raw?url=';
+
+        async function fetchWithProxy(url) {
+            const response = await fetch(CORS_PROXY + encodeURIComponent(url));
+            if (!response.ok) throw new Error('API request failed');
+            return response.json();
+        }
+
+        function showLoading() {
+            document.getElementById('demo-results').innerHTML = '<div class="loading">Fetching from Polymarket</div>';
+        }
+
+        function showError(msg) {
+            document.getElementById('demo-results').innerHTML = `<div class="error-msg">❌ ${msg}</div>`;
+        }
+
+        function renderResults(markets, title) {
+            const resultsDiv = document.getElementById('demo-results');
+
+            if (!markets || markets.length === 0) {
+                resultsDiv.innerHTML = '<div class="demo-placeholder">No markets found</div>';
+                return;
+            }
+
+            let html = `<div style="color: var(--color-chartreuse); margin-bottom: 15px; font-size: 1.1rem;">${title}</div>`;
+
+            markets.slice(0, 10).forEach(m => {
+                const vol = parseFloat(m.volume24hr || 0);
+                const volStr = vol >= 1000000 ? `$${(vol / 1000000).toFixed(1)}M` : vol >= 1000 ? `$${(vol / 1000).toFixed(0)}K` : `$${vol.toFixed(0)}`;
+                const prices = m.outcomePrices;
+                const prob = prices && prices.length ? `${(parseFloat(prices[0]) * 100).toFixed(0)}%` : '?';
+                const endDate = m.endDate ? new Date(m.endDate).toLocaleDateString() : '';
+
+                html += `
+                    <div class="result-item">
+                        <div class="result-question">${m.question}</div>
+                        <div class="result-stats">
+                            <span class="vol">Vol: ${volStr}</span>
+                            <span class="prob">YES: ${prob}</span>
+                            ${endDate ? `<span>Ends: ${endDate}</span>` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+
+            resultsDiv.innerHTML = html;
+        }
+
+        async function fetchTrending() {
+            showLoading();
+            try {
+                let markets = await fetchWithProxy(`${GAMMA_API}/markets?active=true&closed=false`);
+                markets = markets.filter(m => {
+                    const notClosed = !m.closed && !m.resolved;
+                    const endDate = m.endDate ? new Date(m.endDate) : null;
+                    const notExpired = !endDate || endDate > new Date();
+                    const hasVolume = parseFloat(m.volume24hr || 0) > 0;
+                    return notClosed && notExpired && hasVolume;
+                });
+                markets.sort((a, b) => parseFloat(b.volume24hr || 0) - parseFloat(a.volume24hr || 0));
+                renderResults(markets, '📈 TOP 10 TRENDING MARKETS (24H VOLUME)');
+            } catch (error) {
+                showError('Failed to fetch: ' + error.message);
+            }
+        }
+
+        async function fetchMovers() {
+            showLoading();
+            try {
+                let markets = await fetchWithProxy(`${GAMMA_API}/markets?active=true&closed=false`);
+                markets = markets.filter(m => {
+                    const notClosed = !m.closed && !m.resolved;
+                    const endDate = m.endDate ? new Date(m.endDate) : null;
+                    const notExpired = !endDate || endDate > new Date();
+                    const hasHighVol = parseFloat(m.volume24hr || 0) > 50000;
+                    return notClosed && notExpired && hasHighVol;
+                });
+                markets.sort((a, b) => parseFloat(b.volume24hr || 0) - parseFloat(a.volume24hr || 0));
+                renderResults(markets, '🚨 HIGH ACTIVITY MARKETS (>$50K 24H VOLUME)');
+            } catch (error) {
+                showError('Failed to fetch: ' + error.message);
+            }
+        }
+
+        async function fetchPolitics() {
+            showLoading();
+            try {
+                let markets = await fetchWithProxy(`${GAMMA_API}/markets?tag=Politics&active=true&closed=false`);
+                markets = markets.filter(m => {
+                    const notClosed = !m.closed && !m.resolved;
+                    const endDate = m.endDate ? new Date(m.endDate) : null;
+                    const notExpired = !endDate || endDate > new Date();
+                    const hasVolume = parseFloat(m.volume24hr || 0) > 0;
+                    return notClosed && notExpired && hasVolume;
+                });
+                markets.sort((a, b) => parseFloat(b.volume24hr || 0) - parseFloat(a.volume24hr || 0));
+                renderResults(markets, '🏛️ POLITICAL MARKETS');
+            } catch (error) {
+                showError('Failed to fetch: ' + error.message);
+            }
+        }
+
+        function clearResults() {
+            document.getElementById('demo-results').innerHTML = '<div class="demo-placeholder">Click a button to fetch live market data...</div>';
+        }
+    </script>
+</body>
+
+</html>
