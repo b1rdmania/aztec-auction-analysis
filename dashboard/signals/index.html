@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signal Dashboard | Mean Reversion Signals</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        /* Signal-specific styles */
+        .signal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 60px;
+        }
+
+        .signal-card {
+            border: 2px solid var(--color-ink);
+            background: var(--color-parchment);
+            padding: 20px;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .signal-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 5px 5px 0px var(--color-ink);
+        }
+
+        .signal-card.buy {
+            border-left: 6px solid var(--color-aqua);
+        }
+
+        .signal-card.sell {
+            border-left: 6px solid var(--color-orchid);
+        }
+
+        .signal-direction {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 5px 12px;
+            font-family: var(--font-mono);
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+        }
+
+        .signal-direction.buy {
+            background: var(--color-aqua);
+            color: var(--color-ink);
+        }
+
+        .signal-direction.sell {
+            background: var(--color-orchid);
+            color: var(--color-parchment);
+        }
+
+        .signal-market {
+            font-family: var(--font-heading-h4);
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            padding-right: 60px;
+            line-height: 1.3;
+        }
+
+        .signal-meta {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--color-ink);
+        }
+
+        .signal-meta-item {
+            text-align: center;
+        }
+
+        .signal-meta-label {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            opacity: 0.6;
+        }
+
+        .signal-meta-value {
+            font-family: var(--font-heading-h3);
+            font-size: 1.5rem;
+        }
+
+        .signal-strength {
+            display: inline-block;
+            padding: 3px 8px;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            margin-top: 10px;
+        }
+
+        .signal-strength.strong {
+            background: var(--color-chartreuse);
+            color: var(--color-ink);
+        }
+
+        .signal-strength.moderate {
+            background: var(--color-ink);
+            color: var(--color-parchment);
+        }
+
+        .signal-strength.weak {
+            background: transparent;
+            border: 1px solid var(--color-ink);
+        }
+
+        .log-btn {
+            width: 100%;
+            margin-top: 15px;
+            padding: 10px;
+            background: var(--color-ink);
+            color: var(--color-chartreuse);
+            border: none;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .log-btn:hover {
+            background: var(--color-lapis);
+        }
+
+        .log-btn.logged {
+            background: var(--color-malachite);
+            cursor: default;
+        }
+
+        /* Stats bar */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: var(--color-ink);
+            color: var(--color-parchment);
+        }
+
+        .stats-bar-item {
+            text-align: center;
+        }
+
+        .stats-bar-value {
+            font-family: var(--font-heading-h3);
+            font-size: 2rem;
+            color: var(--color-chartreuse);
+        }
+
+        .stats-bar-label {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            opacity: 0.7;
+        }
+
+        /* History table */
+        .history-section {
+            margin-top: 60px;
+            border-top: 4px solid var(--color-ink);
+            padding-top: 40px;
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+        }
+
+        .history-table th {
+            background: var(--color-ink);
+            color: var(--color-chartreuse);
+            padding: 12px;
+            text-align: left;
+            text-transform: uppercase;
+            font-weight: normal;
+        }
+
+        .history-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--color-ink);
+        }
+
+        .history-table tr:hover td {
+            background: rgba(26, 20, 0, 0.05);
+        }
+
+        .outcome-win {
+            color: var(--color-malachite);
+            font-weight: bold;
+        }
+
+        .outcome-loss {
+            color: var(--color-vermillion);
+            font-weight: bold;
+        }
+
+        .outcome-pending {
+            color: var(--color-aubergine);
+            font-style: italic;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+            font-family: var(--font-mono);
+            color: var(--color-aubergine);
+        }
+
+        .error-msg {
+            background: var(--color-vermillion);
+            color: var(--color-parchment);
+            padding: 15px;
+            margin-bottom: 20px;
+            font-family: var(--font-mono);
+        }
+
+        /* Nav link */
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            font-family: var(--font-mono);
+            color: var(--color-ink);
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .refresh-btn {
+            background: var(--color-chartreuse);
+            color: var(--color-ink);
+            border: 2px solid var(--color-ink);
+            padding: 10px 20px;
+            font-family: var(--font-mono);
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .refresh-btn:hover {
+            background: var(--color-ink);
+            color: var(--color-chartreuse);
+        }
+
+        .clear-btn {
+            background: transparent;
+            color: var(--color-vermillion);
+            border: 1px solid var(--color-vermillion);
+            padding: 8px 15px;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <a href="../" class="back-link">← Back to Aztec Dashboard</a>
+
+        <header>
+            <div>
+                <div class="live-badge"><span class="blink-dot">●</span> Live Signals</div>
+                <h1>Signal <span style="font-family: 'EB Garamond'; font-style: italic;">Dashboard</span></h1>
+                <div class="subtitle">Mean Reversion Opportunities</div>
+            </div>
+            <div style="text-align: right;">
+                <button class="refresh-btn" onclick="loadSignals()">↻ Refresh</button>
+                <div style="margin-top: 10px; font-family: var(--font-mono); font-size: 0.8rem;">
+                    Last updated: <span id="last-updated">--</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Paper Trade Stats -->
+        <div class="stats-bar">
+            <div class="stats-bar-item">
+                <div class="stats-bar-value" id="stat-total">0</div>
+                <div class="stats-bar-label">Signals Logged</div>
+            </div>
+            <div class="stats-bar-item">
+                <div class="stats-bar-value" id="stat-resolved">0</div>
+                <div class="stats-bar-label">Resolved</div>
+            </div>
+            <div class="stats-bar-item">
+                <div class="stats-bar-value" id="stat-winrate">--</div>
+                <div class="stats-bar-label">Win Rate</div>
+            </div>
+            <div class="stats-bar-item">
+                <div class="stats-bar-value" id="stat-pnl">$0</div>
+                <div class="stats-bar-label">Paper P&L</div>
+            </div>
+        </div>
+
+        <!-- Live Signals -->
+        <h2 style="font-family: var(--font-heading-h1); font-size: 2.5rem; margin-bottom: 30px;">
+            Live Opportunities
+        </h2>
+
+        <div id="signals-container" class="signal-grid">
+            <div class="loading">Scanning markets...</div>
+        </div>
+
+        <!-- Signal History (Paper Trades) -->
+        <div class="history-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="font-family: var(--font-heading-h1); font-size: 2.5rem;">
+                    Paper Trade Log
+                </h2>
+                <button class="clear-btn" onclick="clearHistory()">Clear History</button>
+            </div>
+
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Market</th>
+                        <th>Direction</th>
+                        <th>Entry Price</th>
+                        <th>Current/Exit</th>
+                        <th>P&L</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="history-body">
+                    <tr>
+                        <td colspan="7" style="text-align: center; opacity: 0.5;">No signals logged yet</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <footer></footer>
+
+    <div class="ticker-wrap">
+        <div class="ticker">
+            PAPER TRADING MODE — NOT REAL MONEY — SIGNALS FOR RESEARCH ONLY — PAPER TRADING MODE — NOT REAL MONEY —
+            SIGNALS FOR RESEARCH ONLY — PAPER TRADING MODE — NOT REAL MONEY
+        </div>
+    </div>
+
+    <script src="signals.js"></script>
+</body>
+
+</html>
