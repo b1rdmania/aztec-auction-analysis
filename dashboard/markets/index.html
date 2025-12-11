@@ -403,12 +403,14 @@
 
     <script>
         const GAMMA_API = 'https://gamma-api.polymarket.com';
-        const CORS_PROXY = 'https://api.allorigins.win/raw?url=';
 
-        async function fetchWithProxy(url) {
-            const response = await fetch(CORS_PROXY + encodeURIComponent(url));
-            if (!response.ok) throw new Error('API request failed');
-            return response.json();
+        async function fetchMarkets(endpoint) {
+            // Gamma API supports CORS, no proxy needed
+            const response = await fetch(`${GAMMA_API}${endpoint}`);
+            if (!response.ok) throw new Error(`API request failed: ${response.status}`);
+            const data = await response.json();
+            console.log('Fetched markets:', data.length, 'items');
+            return data;
         }
 
         function showLoading() {
@@ -454,7 +456,7 @@
         async function fetchTrending() {
             showLoading();
             try {
-                let markets = await fetchWithProxy(`${GAMMA_API}/markets?active=true&closed=false`);
+                let markets = await fetchMarkets('/markets?active=true&closed=false');
                 markets = markets.filter(m => {
                     const notClosed = !m.closed && !m.resolved;
                     const endDate = m.endDate ? new Date(m.endDate) : null;
@@ -472,7 +474,7 @@
         async function fetchMovers() {
             showLoading();
             try {
-                let markets = await fetchWithProxy(`${GAMMA_API}/markets?active=true&closed=false`);
+                let markets = await fetchMarkets('/markets?active=true&closed=false');
                 markets = markets.filter(m => {
                     const notClosed = !m.closed && !m.resolved;
                     const endDate = m.endDate ? new Date(m.endDate) : null;
@@ -490,7 +492,7 @@
         async function fetchPolitics() {
             showLoading();
             try {
-                let markets = await fetchWithProxy(`${GAMMA_API}/markets?tag=Politics&active=true&closed=false`);
+                let markets = await fetchMarkets('/markets?tag=Politics&active=true&closed=false');
                 markets = markets.filter(m => {
                     const notClosed = !m.closed && !m.resolved;
                     const endDate = m.endDate ? new Date(m.endDate) : null;
