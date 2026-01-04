@@ -70,6 +70,12 @@ class Signal(BaseModel):
     max_loss: Optional[float] = None
     breakeven_probability: Optional[float] = None
     
+    # Execution parameters
+    entry_price: Optional[float] = None  # Target entry price (defaults to current_price)
+    stop_loss: Optional[float] = None    # Stop loss price
+    take_profit: Optional[float] = None  # Take profit price
+    max_slippage_pct: float = 2.0        # Maximum acceptable slippage
+    
     # Metadata
     rationale: str = ""
     metadata: Dict[str, Any] = Field(default_factory=dict)

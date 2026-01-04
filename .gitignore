@@ -4,3 +4,52 @@ dist/
 .env
 .DS_Store
 .vercel
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Trading data (sensitive)
+*.db
+data/trades.db
+data/positions.db
+data/trades_*.db
+data/*_pids.txt
+data/recordings_*/
+data/recordings/
+logs/
+tunnel.log
+config/active_*.yaml
+
+# Cloudflared
+cloudflared
+*.pkg
+
+# Wallet keys (NEVER COMMIT!)
+*_PRIVATE_KEY*
+wallet.json
+keys/
+toolkit/polymarket-agent/
