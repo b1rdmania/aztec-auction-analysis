@@ -1,232 +1,153 @@
-# Polymarket Systematic Trading Agent 🤖
+# Aztec Auction Analysis + Polymarket Trading Toolkit
 
-A complete autonomous trading system for Polymarket prediction markets, combining behavioral finance research with systematic execution.
+Two interconnected projects for prediction market research and systematic trading:
 
-## ⚡ Quick Start - 3-Model Paper Trading Race 🏁
+1. **Aztec Auction Intelligence** (TypeScript) - On-chain transparency for Aztec token auction
+2. **Polymarket Systematic Trading** (Python) - Autonomous trading based on behavioral finance
 
-**NEW**: Run 3 different strategies simultaneously to find which works best!
+---
+
+## 🎯 Project 1: Aztec Auction Analysis
+
+**Live Dashboard**: https://aztec-auction-analysis.vercel.app/
+
+Real-time on-chain tracker providing transparency for the Aztec Network token auction:
+- Scans 200,000+ blocks for bid/exit events
+- Categorizes bidders by price sensitivity ($0.85, $1.25, $2.50)
+- Total active commitment tracking
+- Helps Polymarket traders assess auction dynamics
+
+**Tech**: TypeScript, ethers.js, Vercel
+
+---
+
+## 🤖 Project 2: Polymarket Trading Toolkit
+
+Complete autonomous trading system with multi-model paper trading.
+
+### ⚡ Quick Start - Docker (Recommended)
 
 ```bash
-# 1. Start all 3 models (Conservative, Moderate, Aggressive)
-python3 scripts/start_models.py
+# Start all 3 models + dashboard in Docker
+./scripts/docker.sh start
 
-# 2. Monitor performance in real-time
-python3 scripts/monitor_models.py --loop
+# View logs
+./scripts/docker.sh logs
 
-# 3. After 30 days, pick the winner!
+# Stop everything
+./scripts/docker.sh stop
 ```
 
-**That's it!** All 3 models compete head-to-head for 30 days. Best one wins and goes live.
+**Live Dashboard**: https://vercel-frontend-eight-omega.vercel.app
+- Monitor all 3 models in real-time
+- View P&L, win rates, trade history
+- Access from anywhere (phone, laptop, etc.)
 
-See: [`PAPER_TRADING_START.md`](./PAPER_TRADING_START.md) for full guide.
-
-### Traditional Single-Model Start
+### Alternative: Local Setup
 
 ```bash
-# 1. Clone repository
-git clone https://github.com/b1rdmania/aztec-auction-analysis.git
-cd aztec-auction-analysis
-
-# 2. Install execution engine
-cd toolkit/execution-engine
-pip install -e .
-
-# 3. Install signal generators
+# Install packages
+cd toolkit/execution-engine && pip install -e .
 cd ../mean-reversion && pip install -e .
 cd ../volatility-alerts && pip install -e .
 cd ../polymarket-data && pip install -e .
 
-# 4. Start single model paper trading
-python agents/systematic_trader.py --mode paper
+# Start models
+python3 scripts/start_models.py
+
+# Monitor performance
+python3 scripts/monitor_models.py --loop
 ```
 
-## 📋 What's Inside
+---
 
-This project combines two major components:
+## 📋 What's Inside - Trading System
 
-### 1. Aztec Auction Analysis (TypeScript)
-Real-time on-chain tracker for the Aztec Network token auction
-- **Dashboard**: https://aztec-auction-analysis.vercel.app/
-- Scans 200,000 blocks for bid events
-- Categorizes by price sensitivity
-- Provides transparency for Polymarket traders
+### 🏗️ System Architecture
 
-### 2. Systematic Trading Infrastructure (Python)
-Complete autonomous trading system based on behavioral finance research
-- Mean reversion signals (Berg & Rietz 2018)
-- Volatility monitoring
-- Whale tracking
-- Automated execution with risk management
+**Signal Generation** → **Risk Check** → **Position Sizing** → **Execution** → **Monitoring**
 
-## 🏗️ Architecture
+| Component | Purpose |
+|-----------|---------|
+| **Signals** | Mean reversion, volatility alerts, whale tracking |
+| **Risk** | Position limits, exposure caps, spread checks |
+| **Sizing** | Kelly Criterion for optimal bet sizing |
+| **Execution** | Polymarket Agents integration (paper/live) |
+| **Monitoring** | Dashboard, SQLite DB, JSON logs |
+
+### 📦 Key Components
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                   SIGNAL GENERATION                      │
-├─────────────────────────────────────────────────────────┤
-│  • Mean Reversion (Longshot bias, Favorite overpricing) │
-│  • Volatility Alerts (Price spikes > 10%)               │
-│  • Whale Tracker (Smart money following)                │
-└────────────────────┬────────────────────────────────────┘
-                     │
-                     ▼
-┌─────────────────────────────────────────────────────────┐
-│                  RISK MANAGEMENT                         │
-├─────────────────────────────────────────────────────────┤
-│  • Position limits ($500 max)                            │
-│  • Total exposure cap ($2,000)                           │
-│  • Drawdown monitoring (25% emergency stop)              │
-│  • Spread checks (5% max)                                │
-└────────────────────┬────────────────────────────────────┘
-                     │
-                     ▼
-┌─────────────────────────────────────────────────────────┐
-│                 POSITION SIZING                          │
-├─────────────────────────────────────────────────────────┤
-│  • Kelly Criterion (fractional 0.25)                     │
-│  • Edge-based calculation                                │
-│  • Min/max limits enforced                               │
-└────────────────────┬────────────────────────────────────┘
-                     │
-                     ▼
-┌─────────────────────────────────────────────────────────┐
-│                    EXECUTION                             │
-├─────────────────────────────────────────────────────────┤
-│  • Polymarket Agents integration                         │
-│  • Paper trading mode                                    │
-│  • Live trading with wallet signing                      │
-│  • Comprehensive logging                                 │
-└────────────────────┬────────────────────────────────────┘
-                     │
-                     ▼
-┌─────────────────────────────────────────────────────────┐
-│              MONITORING & REPORTING                      │
-├─────────────────────────────────────────────────────────┤
-│  • Live dashboard (P&L, positions, trades)               │
-│  • SQLite database (queryable history)                   │
-│  • JSON logs (audit trail)                               │
-│  • Performance metrics (Sharpe, drawdown, win rate)      │
-└─────────────────────────────────────────────────────────┘
+toolkit/
+├── execution-engine/     # Core trading infrastructure
+├── mean-reversion/       # Behavioral bias signals (Berg & Rietz 2018)
+├── volatility-alerts/    # Price spike detection
+├── whale-tracker/        # Smart money monitoring
+└── polymarket-data/      # API client
+
+agents/
+└── systematic_trader.py  # Main trading bot
+
+dashboard/trading/        # Live web dashboard
+config/                   # 3 model configurations
+data/                     # Trade databases + recordings
 ```
 
-## 📦 Components
-
-### Core Trading Engine
-- [`toolkit/execution-engine/`](toolkit/execution-engine/) - Main execution infrastructure
-  - `orchestrator.py` - Trading loop coordinator
-  - `executor.py` - Polymarket trade execution
-  - `risk_manager.py` - Position and exposure limits
-  - `position_sizer.py` - Kelly criterion implementation
-  - `paper_trader.py` - Simulation mode
-  - `trade_logger.py` - Comprehensive logging
-
-### Signal Generators
-- [`toolkit/mean-reversion/`](toolkit/mean-reversion/) - Behavioral bias signals
-- [`toolkit/volatility-alerts/`](toolkit/volatility-alerts/) - Price spike detection
-- [`toolkit/whale-tracker/`](toolkit/whale-tracker/) - Smart money monitoring
-
-### Data Layer
-- [`toolkit/polymarket-data/`](toolkit/polymarket-data/) - API client for Polymarket
-
-### Trading Agent
-- [`agents/systematic_trader.py`](agents/systematic_trader.py) - Main autonomous trading script
-
-### Monitoring
-- [`dashboard/trading/`](dashboard/trading/) - Live trading dashboard
-- SQLite database for trade history
-- JSON logs for audit trail
+---
 
 ## 🎯 Trading Strategy
 
-Based on academic research showing systematic biases in prediction markets:
+Based on academic research: **mean reversion** in prediction markets.
 
-| Signal Type | Logic | Academic Source |
-|-------------|-------|-----------------|
-| **Buy Longshot** | Contracts <30% underpriced at 1-3 week horizons | Berg & Rietz (2018) |
-| **Sell Favorite** | Contracts >70% overpriced at 1-3 week horizons | Berg & Rietz (2018) |
-| **Fade Spike** | Emotional overreaction creates reversion | De Bondt & Thaler (1985) |
+| Signal | Logic | Source |
+|--------|-------|--------|
+| Buy Longshot | Contracts <30% underpriced | Berg & Rietz (2018) |
+| Sell Favorite | Contracts >70% overpriced | Berg & Rietz (2018) |
+| Fade Spike | Price spikes >10% revert | De Bondt & Thaler (1985) |
 
-### Key Insights
+**Key Facts**:
 - 86.4% of Polymarket traders lose money
-- Political markets more irrational than sports
-- Partisan anchoring creates persistent mispricing
-- Mean reversion at intermediate horizons (7-21 days)
+- Political markets have more irrational pricing
+- Mean reversion works best at 7-21 day horizons
 
-## 🚀 Usage
+---
 
-### Paper Trading (Recommended First)
+## 🔧 Usage
 
+### Monitor Dashboard
+**URL**: https://vercel-frontend-eight-omega.vercel.app
+- View from anywhere (globally accessible)
+- Real-time P&L, trades, win rates
+- All 3 models compared
+
+### Check Logs
 ```bash
-python agents/systematic_trader.py --mode paper --config config/trading.yaml
-```
+# View specific model
+docker compose logs moderate
 
-**Run for minimum 30 days** to validate strategy before live trading.
-
-### Monitoring
-
-View dashboard:
-```bash
-open dashboard/trading/index.html
-```
-
-Check performance:
-```bash
-sqlite3 data/trades.db "SELECT * FROM performance"
-```
-
-View logs:
-```bash
-tail -f logs/trading.log
+# Check databases
+sqlite3 data/trades_conservative.db "SELECT * FROM trades"
 ```
 
 ### Emergency Stop
-
-If anything goes wrong:
 ```bash
 python scripts/emergency_stop.py
 ```
 
-### Live Trading (After Validation)
-
-1. **Setup wallet** (see [`WALLET_SETUP.md`](WALLET_SETUP.md))
-2. **Fund with USDC** on Polygon
-3. **Start small** (see [`GO_LIVE.md`](GO_LIVE.md))
-4. **Monitor closely**
-
-```bash
-python agents/systematic_trader.py --mode live --config config/trading.yaml
-```
-
-## ⚙️ Configuration
-
-Edit [`config/trading.yaml`](config/trading.yaml):
-
+### Configuration
+Edit `config/active_conservative.yaml` (or moderate/aggressive):
 ```yaml
-trading:
-  mode: paper  # paper | live
-
 risk:
-  max_position_usd: 500
-  max_total_exposure_usd: 2000
-  max_positions: 10
-  kelly_fraction: 0.25
-
+  max_position_usd: 200-800  # Based on model
+  kelly_fraction: 0.15-0.35   # Conservative to aggressive
 signals:
   mean_reversion:
-    enabled: true
-    min_strength: MODERATE
-  volatility:
-    enabled: true
-    threshold_pct: 10.0
-
-execution:
-  check_interval_seconds: 300
-  dry_run: true  # Set false for live trading
+    min_strength: STRONG/MODERATE/WEAK
 ```
 
-## 📊 Performance Metrics
+---
 
-Target metrics for validation:
+## 📊 Performance Targets
 
 | Metric | Target |
 |--------|--------|
@@ -234,125 +155,101 @@ Target metrics for validation:
 | Avg Profit/Trade | > $25 |
 | Sharpe Ratio | > 1.0 |
 | Max Drawdown | < 20% |
-| Execution Success | > 98% |
 
-### 🔥 Lessons from Real Bot Builders
+### 🔥 Real-World Lessons
 
-Based on [@the_smart_ape's successful Polymarket bot](https://twitter.com/the_smart_ape/status/2005576087875527082):
-
-**Parameter selection is critical**:
+Based on [@the_smart_ape's bot](https://twitter.com/the_smart_ape/status/2005576087875527082):
 - Conservative params: **+86% ROI** ✅
 - Aggressive params: **-50% ROI** ❌
 
-**We've integrated their lessons**:
-- ✅ Live data recording (Polymarket's historical API is incomplete)
-- ✅ Parameter sweep testing (test multiple configs at once)
-- ✅ Realistic slippage simulation (0.2-0.5%)
-- ✅ Execution quality tracking
+**Parameter selection is everything!** That's why we test 3 models in parallel.
 
-See [`LESSONS_FROM_SMART_APE.md`](LESSONS_FROM_SMART_APE.md) for details.
+See: [`LESSONS_FROM_SMART_APE.md`](LESSONS_FROM_SMART_APE.md)
 
-## 🧪 Testing
+---
 
-### Backtesting on Historical Markets
+## 🧪 Testing & Validation
 
-**⚠️ Important**: Polymarket's historical API returns no data. See [`BACKTEST_REALITY.md`](./BACKTEST_REALITY.md).
+### Paper Trading (Current)
+✅ Running 30-day paper trading validation now
+- 3 models competing head-to-head
+- Recording live market data for future backtesting
+- Dashboard: https://vercel-frontend-eight-omega.vercel.app
 
-```bash
-# Option 1: Demo with synthetic data (validate code works)
-python3 scripts/demo_backtest.py
+### Backtesting
+⚠️ **Reality Check**: Polymarket's historical API is incomplete/empty
 
-# Option 2: Get Adjacent API for real historical data (paid)
-export ADJACENT_API_KEY="your_key"
-python3 toolkit/execution-engine/src/execution_engine/backtester.py --market trump-2024
+**Options**:
+1. Use synthetic data: `python3 scripts/demo_backtest.py`
+2. Wait for our recorded data (30 days from now)
+3. Use Adjacent API (paid service)
 
-# Option 3: Record your own (best - already enabled in paper mode)
-python3 agents/systematic_trader.py --mode paper  # Automatically records
-```
+See: [`BACKTEST_REALITY.md`](BACKTEST_REALITY.md)
 
-**Our Recommendation**: Start paper trading NOW. Don't wait for backtests. 30 days of paper trading > theoretical backtests.
-
-See: [`BACKTESTING_GUIDE.md`](./BACKTESTING_GUIDE.md) | [`BACKTEST_REALITY.md`](./BACKTEST_REALITY.md)
-
-### Unit Tests
-```bash
-cd toolkit/execution-engine
-pytest tests/ -v
-```
-
-### Integration Tests
-```bash
-pytest tests/integration/ -v
-```
-
-### Parameter Sweep Testing
-Test multiple configurations at once:
-```bash
-python toolkit/execution-engine/src/execution_engine/parameter_sweep.py --days 30
-```
-
-This tests 4 configs (ultra-conservative to aggressive) and tells you which works best.
-
-See [`LESSONS_FROM_SMART_APE.md`](LESSONS_FROM_SMART_APE.md) for why this matters.
-
-## 🔒 Security
-
-- Never commit `.env` files
-- Store private keys only in environment variables
-- Use hardware wallet for large amounts
-- Regular backups of trade database
-- Monitor for unauthorized transactions
-
-See [`WALLET_SETUP.md`](WALLET_SETUP.md) for complete security guide.
-
-## 📚 Research
-
-Comprehensive research database in [`research/`](research/):
-- 6 academic themes
-- 718-line quantitative guide
-- Political betting strategies
-- Polymarket ecosystem analysis
-
-Key documents:
-- [`THESIS.md`](THESIS.md) - Core trading thesis
-- [`WHITEPAPER.md`](WHITEPAPER.md) - Full technical documentation
-- [`research/quant_mean_reversion_guide.md`](research/quant_mean_reversion_guide.md) - Mathematical foundations
+---
 
 ## 🚢 Deployment
 
-### Docker
+### Current Setup (Active)
+- **Docker** containers on macOS (3 models + API)
+- **Cloudflare Tunnel** for API access
+- **Vercel** for dashboard hosting
 
-    ```bash
-./scripts/deploy-docker.sh
-    ```
+### Future: Raspberry Pi
+When your Pi arrives:
+- Copy project over
+- Run 24/7 for ~$5/year electricity
+- Complete guide: [`PI_COMPLETE_GUIDE.md`](PI_COMPLETE_GUIDE.md)
 
-### Systemd (Linux)
+---
 
-    ```bash
-sudo cp scripts/systematic-trader.service /etc/systemd/system/
-sudo systemctl enable systematic-trader
-sudo systemctl start systematic-trader
-```
+## 📚 Documentation
 
-See [`DEPLOYMENT.md`](DEPLOYMENT.md) for complete guide.
+### Essential Reading
+- [`THESIS.md`](THESIS.md) - Why this works
+- [`WHITEPAPER.md`](WHITEPAPER.md) - Technical architecture
+- [`PAPER_TRADING_START.md`](PAPER_TRADING_START.md) - Multi-model setup
+- [`LESSONS_FROM_SMART_APE.md`](LESSONS_FROM_SMART_APE.md) - Real bot insights
 
-## 📈 Roadmap
+### Research
+- [`research/quant_mean_reversion_guide.md`](research/quant_mean_reversion_guide.md) - Math foundations
+- [`research/papers/`](research/papers/) - 6 academic themes
 
-- [x] Core execution engine
-- [x] Mean reversion signals
-- [x] Paper trading
-- [x] Risk management
-- [x] Logging & monitoring
-- [x] Dashboard
-- [x] Unit tests
-- [x] Integration tests
-- [x] Deployment configs
-- [ ] **Paper trade validation (30 days)**
-- [ ] Live trading launch
-- [ ] Historical backtesting (requires Adjacent API)
-- [ ] Advanced signal combinations
-- [ ] Machine learning enhancements
-- [ ] Multi-market arbitrage
+### Operations
+- [`WALLET_SETUP.md`](WALLET_SETUP.md) - Security guide
+- [`GO_LIVE.md`](GO_LIVE.md) - Live trading checklist
+- [`DEPLOYMENT.md`](DEPLOYMENT.md) - Deployment options
+
+---
+
+## 🔒 Security
+
+- ✅ Never commit `.env` files
+- ✅ Private keys in environment variables only
+- ✅ Hardware wallet for large amounts
+- ✅ Regular database backups
+- ⚠️ This is your money - be paranoid!
+
+## 📈 Status & Roadmap
+
+### ✅ Complete
+- Core execution engine with risk management
+- 3-model paper trading system
+- Live dashboard (Docker + Vercel)
+- Signal generators (mean reversion, volatility, whale)
+- Comprehensive logging & monitoring
+
+### 🚧 In Progress
+- **30-day paper trading validation** (currently running)
+- Live market data recording
+
+### 🔮 Future
+- Live trading launch (after validation)
+- Machine learning signal enhancements
+- Multi-market arbitrage
+- Historical backtesting (needs Adjacent API)
+
+---
 
 ## ⚠️ Disclaimer
 
@@ -360,30 +257,22 @@ See [`DEPLOYMENT.md`](DEPLOYMENT.md) for complete guide.
 
 - Not financial advice
 - Use at your own risk
-- No guarantees of profit
 - Can result in loss of capital
-- Thoroughly test before live trading
-
-## 📄 License
-
-MIT License - See [LICENSE](LICENSE.md)
-
-## 🤝 Contributing
-
-Contributions welcome! See [CONTRIBUTING.md](CONTRIBUTING.md)
-
-## 📞 Support
-
-- **Issues**: Open a GitHub issue
-- **Security**: Email security concerns privately
-- **Emergency**: Use emergency stop script
-
-## 🙏 Acknowledgments
-
-- Polymarket for the prediction market platform
-- Academic researchers (Berg, Rietz, De Bondt, Thaler, Munger)
-- Open source community
+- Test thoroughly before live trading
 
 ---
 
-**Built with systematic discipline. Trade with caution. 🎯**
+## 📞 Quick Links
+
+| Link | Purpose |
+|------|---------|
+| 📊 [Dashboard](https://vercel-frontend-eight-omega.vercel.app) | Live trading monitoring |
+| 🐛 [Issues](https://github.com/b1rdmania/aztec-auction-analysis/issues) | Report bugs |
+| 📧 Security | Email privately for vulnerabilities |
+| 🚨 Emergency | `python scripts/emergency_stop.py` |
+
+---
+
+**Built with systematic discipline. Trade with patience. 🎯**
+
+*Note: GitHub repo name will be updated to reflect dual nature (Aztec + Polymarket)*
