@@ -244,10 +244,43 @@
             border-radius: 10px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.1);
             font-size: 0.9em;
+            z-index: 1000;
         }
 
         .connected { color: #10b981; }
         .disconnected { color: #ef4444; }
+
+        nav {
+            background: white;
+            padding: 15px 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            padding: 10px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            color: #667eea;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        nav a:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+
+        nav a.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
 
         @media (max-width: 768px) {
             .models-grid {
@@ -274,6 +307,14 @@
             <h1>🏁 Polymarket Trading Dashboard</h1>
             <p class="subtitle">3-Model Paper Trading Race | Real-Time Performance Monitor</p>
         </header>
+
+        <nav>
+            <a href="index.html" class="active">📊 Dashboard</a>
+            <a href="about.html">💡 Concept</a>
+            <a href="research.html">📚 Research</a>
+            <a href="system.html">⚙️ System</a>
+            <a href="theory.html">🔬 Theory</a>
+        </nav>
 
         <div class="status-bar">
             <div class="status-item">
@@ -330,7 +371,7 @@
 
     <script>
         // Get API URL - hardcoded tunnel URL
-        const API_BASE = 'https://query-thereof-dialog-fifth.trycloudflare.com';
+        const API_BASE = 'https://breakfast-specialized-bobby-trans.trycloudflare.com';
         
         let connectionOk = false;
 

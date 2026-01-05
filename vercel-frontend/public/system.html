@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Architecture | Trading Infrastructure</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        nav {
+            background: white;
+            padding: 15px 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            padding: 10px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            color: #667eea;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        nav a:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+
+        nav a.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            line-height: 1.8;
+        }
+
+        h2 {
+            color: #667eea;
+            font-size: 2em;
+            margin: 30px 0 20px 0;
+            padding-top: 20px;
+            border-top: 2px solid #f0f0f0;
+        }
+
+        h2:first-child {
+            margin-top: 0;
+            padding-top: 0;
+            border-top: none;
+        }
+
+        .architecture-flow {
+            background: #f8fafc;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 25px 0;
+            border: 2px solid #e2e8f0;
+        }
+
+        .flow-box {
+            background: white;
+            border: 3px solid #667eea;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .flow-box h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.4em;
+        }
+
+        .flow-arrow {
+            text-align: center;
+            font-size: 2em;
+            color: #667eea;
+            margin: 10px 0;
+        }
+
+        .component-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .component-card {
+            background: #f0f9ff;
+            border-left: 4px solid #0ea5e9;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .component-card h3 {
+            color: #0369a1;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .component-card code {
+            background: #e0f2fe;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #0c4a6e;
+        }
+
+        .tech-stack {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+        }
+
+        .tech-stack h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .tech-badge {
+            display: inline-block;
+            background: white;
+            border: 2px solid #667eea;
+            color: #667eea;
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin: 5px;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .highlight-box {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+        }
+
+        .highlight-box strong {
+            color: #92400e;
+        }
+
+        ul {
+            margin: 15px 0 15px 30px;
+        }
+
+        li {
+            margin: 10px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: #f9fafb;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .content {
+                padding: 25px;
+            }
+
+            .component-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚙️ System Architecture</h1>
+            <p class="subtitle">How We Built an Autonomous Trading System</p>
+        </header>
+
+        <nav>
+            <a href="index.html">📊 Dashboard</a>
+            <a href="about.html">💡 Concept</a>
+            <a href="research.html">📚 Research</a>
+            <a href="system.html" class="active">⚙️ System</a>
+            <a href="theory.html">🔬 Theory</a>
+        </nav>
+
+        <div class="content">
+            <h2>🏗️ High-Level Architecture</h2>
+
+            <div class="architecture-flow">
+                <div class="flow-box">
+                    <h3>📡 Signal Generation</h3>
+                    <p>Mean reversion, volatility alerts, whale tracking</p>
+                </div>
+                <div class="flow-arrow">⬇️</div>
+                <div class="flow-box">
+                    <h3>🛡️ Risk Management</h3>
+                    <p>Position limits, exposure caps, spread checks</p>
+                </div>
+                <div class="flow-arrow">⬇️</div>
+                <div class="flow-box">
+                    <h3>📊 Position Sizing</h3>
+                    <p>Kelly Criterion for optimal bet sizing</p>
+                </div>
+                <div class="flow-arrow">⬇️</div>
+                <div class="flow-box">
+                    <h3>⚡ Execution</h3>
+                    <p>Polymarket Agents integration (paper/live)</p>
+                </div>
+                <div class="flow-arrow">⬇️</div>
+                <div class="flow-box">
+                    <h3>📈 Monitoring</h3>
+                    <p>Dashboard, database, logs, alerts</p>
+                </div>
+            </div>
+
+            <h2>🔧 Core Components</h2>
+
+            <div class="component-grid">
+                <div class="component-card">
+                    <h3>Orchestrator</h3>
+                    <p><code>orchestrator.py</code></p>
+                    <p>Main trading loop coordinator. Fetches signals, applies risk checks, sizes positions, and executes trades. Runs continuously with configurable intervals.</p>
+                </div>
+
+                <div class="component-card">
+                    <h3>Signal Generator</h3>
+                    <p><code>mean_reversion/generator.py</code></p>
+                    <p>Analyzes market data for mean reversion opportunities using z-scores, historical volatility, and behavioral bias indicators.</p>
+                </div>
+
+                <div class="component-card">
+                    <h3>Risk Manager</h3>
+                    <p><code>risk_manager.py</code></p>
+                    <p>Enforces position limits, total exposure caps, spread checks, and drawdown monitoring. Vetoes trades that violate risk parameters.</p>
+                </div>
+
+                <div class="component-card">
+                    <h3>Position Sizer</h3>
+                    <p><code>position_sizer.py</code></p>
+                    <p>Implements Kelly Criterion with configurable fractions (0.15-0.35) to determine optimal trade size based on edge and volatility.</p>
+                </div>
+
+                <div class="component-card">
+                    <h3>Executor</h3>
+                    <p><code>executor.py</code></p>
+                    <p>Bridge to Polymarket Agents framework. Handles order construction, wallet signing, and trade submission. Tracks slippage and execution quality.</p>
+                </div>
+
+                <div class="component-card">
+                    <h3>Paper Trader</h3>
+                    <p><code>paper_trader.py</code></p>
+                    <p>Simulates trades without real money. Tracks P&L, win rate, and validates strategy before live deployment.</p>
+                </div>
+
+                <div class="component-card">
+                    <h3>Data Recorder</h3>
+                    <p><code>data_recorder.py</code></p>
+                    <p>Captures live market data (orderbook, spreads, volume) for future backtesting and strategy improvement.</p>
+                </div>
+
+                <div class="component-card">
+                    <h3>Trade Logger</h3>
+                    <p><code>trade_logger.py</code></p>
+                    <p>Writes trade history to SQLite database and JSON logs. Provides audit trail and performance analytics.</p>
+                </div>
+
+                <div class="component-card">
+                    <h3>Polymarket Client</h3>
+                    <p><code>polymarket_data/client.py</code></p>
+                    <p>API wrapper for fetching markets, orderbooks, price history, and trade data from Polymarket's public APIs.</p>
+                </div>
+            </div>
+
+            <h2>🎯 3-Model Setup</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Model</th>
+                        <th>Min Signal</th>
+                        <th>Max Position</th>
+                        <th>Kelly Fraction</th>
+                        <th>Check Interval</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Conservative</strong></td>
+                        <td>STRONG</td>
+                        <td>$200</td>
+                        <td>0.15</td>
+                        <td>10 min</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Moderate</strong></td>
+                        <td>MODERATE</td>
+                        <td>$500</td>
+                        <td>0.25</td>
+                        <td>5 min</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Aggressive</strong></td>
+                        <td>WEAK</td>
+                        <td>$800</td>
+                        <td>0.35</td>
+                        <td>3 min</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p>Each model runs as a separate Docker container with its own database, config, and logs. They operate independently and are compared head-to-head.</p>
+
+            <h2>💾 Data Flow</h2>
+
+            <div class="highlight-box">
+                <strong>Input:</strong> Polymarket API → Market data, orderbooks, price history<br>
+                <strong>Processing:</strong> Signal generation → Risk checks → Position sizing<br>
+                <strong>Execution:</strong> Paper trader (simulation) or Live executor (real trades)<br>
+                <strong>Storage:</strong> SQLite (structured trades) + JSON (raw logs) + CSV (market snapshots)<br>
+                <strong>Output:</strong> Dashboard API → Vercel frontend → Browser
+            </div>
+
+            <h2>🐳 Deployment Stack</h2>
+
+            <div class="tech-stack">
+                <h3>Infrastructure</h3>
+                <span class="tech-badge">Docker</span>
+                <span class="tech-badge">Docker Compose</span>
+                <span class="tech-badge">Cloudflare Tunnel</span>
+                <span class="tech-badge">Vercel</span>
+            </div>
+
+            <div class="tech-stack">
+                <h3>Backend (Python)</h3>
+                <span class="tech-badge">FastAPI</span>
+                <span class="tech-badge">SQLite</span>
+                <span class="tech-badge">httpx</span>
+                <span class="tech-badge">pydantic</span>
+                <span class="tech-badge">numpy</span>
+                <span class="tech-badge">pandas</span>
+            </div>
+
+            <div class="tech-stack">
+                <h3>Frontend</h3>
+                <span class="tech-badge">HTML5</span>
+                <span class="tech-badge">CSS3</span>
+                <span class="tech-badge">Vanilla JS</span>
+                <span class="tech-badge">Fetch API</span>
+            </div>
+
+            <div class="tech-stack">
+                <h3>Blockchain</h3>
+                <span class="tech-badge">Polygon</span>
+                <span class="tech-badge">USDC</span>
+                <span class="tech-badge">Polymarket Agents</span>
+                <span class="tech-badge">Web3</span>
+            </div>
+
+            <h2>📂 Project Structure</h2>
+
+            <pre style="background: #1e293b; color: #e2e8f0; padding: 20px; border-radius: 10px; overflow-x: auto; font-size: 0.9em;">
+├── toolkit/
+│   ├── execution-engine/       # Core trading infrastructure
+│   │   ├── orchestrator.py     # Main coordinator
+│   │   ├── executor.py         # Trade execution
+│   │   ├── risk_manager.py     # Risk controls
+│   │   ├── position_sizer.py   # Kelly Criterion
+│   │   ├── paper_trader.py     # Simulation mode
+│   │   └── data_recorder.py    # Live data capture
+│   │
+│   ├── mean-reversion/         # Signal generation
+│   │   ├── generator.py        # Mean reversion signals
+│   │   └── models.py           # Signal dataclasses
+│   │
+│   ├── volatility-alerts/      # Price spike detection
+│   ├── whale-tracker/          # Smart money monitoring
+│   └── polymarket-data/        # API client
+│
+├── agents/
+│   └── systematic_trader.py    # Main trading bot
+│
+├── api/
+│   └── dashboard_api.py        # FastAPI backend
+│
+├── config/
+│   ├── active_conservative.yaml
+│   ├── active_moderate.yaml
+│   └── active_aggressive.yaml
+│
+├── data/
+│   ├── trades_conservative.db
+│   ├── trades_moderate.db
+│   ├── trades_aggressive.db
+│   └── recordings_{model}/     # Live market data
+│
+├── logs/
+│   ├── conservative/
+│   ├── moderate/
+│   └── aggressive/
+│
+├── vercel-frontend/
+│   └── public/
+│       ├── index.html          # Dashboard
+│       ├── about.html          # This concept page
+│       ├── research.html       # Research links
+│       ├── system.html         # This page
+│       └── theory.html         # Mathematical foundations
+│
+└── docker-compose.yml          # Multi-container orchestration</pre>
+
+            <h2>🔄 Trading Loop</h2>
+
+            <ol>
+                <li><strong>Wake up</strong> (every 3-10 minutes depending on model)</li>
+                <li><strong>Fetch markets</strong> from Polymarket API</li>
+                <li><strong>Generate signals</strong> for each market (z-score, volatility, etc.)</li>
+                <li><strong>Filter signals</strong> by strength threshold (STRONG/MODERATE/WEAK)</li>
+                <li><strong>Check risk</strong> (position limits, total exposure, spread)</li>
+                <li><strong>Size position</strong> using Kelly Criterion</li>
+                <li><strong>Execute trade</strong> (paper: simulate, live: sign & submit)</li>
+                <li><strong>Log everything</strong> (database + JSON + CSV)</li>
+                <li><strong>Record market data</strong> for future analysis</li>
+                <li><strong>Sleep</strong> until next cycle</li>
+            </ol>
+
+            <h2>🚨 Safety Features</h2>
+
+            <ul>
+                <li><strong>Position limits:</strong> $200-800 per trade depending on model</li>
+                <li><strong>Total exposure cap:</strong> $2,000 across all positions</li>
+                <li><strong>Max positions:</strong> 10 open positions at once</li>
+                <li><strong>Spread checks:</strong> Reject trades with >5% spread</li>
+                <li><strong>Drawdown monitoring:</strong> Emergency stop at 25% drawdown</li>
+                <li><strong>Slippage limits:</strong> Max 2% slippage per trade</li>
+                <li><strong>Paper trading mode:</strong> Validate before going live</li>
+                <li><strong>Emergency stop script:</strong> <code>scripts/emergency_stop.py</code></li>
+            </ul>
+
+            <h2>📊 Monitoring & Observability</h2>
+
+            <div class="component-grid">
+                <div class="component-card">
+                    <h3>Live Dashboard</h3>
+                    <p>Real-time P&L, win rates, trade counts for all 3 models. Auto-refreshes every 10 seconds. Accessible globally via Vercel.</p>
+                </div>
+
+                <div class="component-card">
+                    <h3>SQLite Database</h3>
+                    <p>Structured trade history with timestamps, prices, P&L, and metadata. Queryable for analytics.</p>
+                </div>
+
+                <div class="component-card">
+                    <h3>JSON Logs</h3>
+                    <p>Detailed logs of every decision: signals generated, risk checks, execution results, errors.</p>
+                </div>
+
+                <div class="component-card">
+                    <h3>CSV Recordings</h3>
+                    <p>Market data snapshots: best bid, best ask, spread, volume. Used for future backtesting.</p>
+                </div>
+
+                <div class="component-card">
+                    <h3>Docker Logs</h3>
+                    <p><code>docker compose logs [model]</code> for container-level debugging and monitoring.</p>
+                </div>
+
+                <div class="component-card">
+                    <h3>Health Checks</h3>
+                    <p>Automated container health monitoring. Dashboard shows "models_running" status.</p>
+                </div>
+            </div>
+
+            <div style="margin-top: 40px; padding: 25px; background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); border-radius: 15px;">
+                <p><strong>Want to dive deeper?</strong></p>
+                <ul style="margin-top: 15px;">
+                    <li>See <a href="theory.html" style="color: #667eea;">Theory</a> for the mathematical foundations</li>
+                    <li>View <a href="index.html" style="color: #667eea;">Dashboard</a> for live performance</li>
+                    <li>Read <a href="research.html" style="color: #667eea;">Research</a> for academic sources</li>
+                    <li>Check <a href="https://github.com/b1rdmania/aztec-auction-analysis" target="_blank" style="color: #667eea;">GitHub</a> for source code</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

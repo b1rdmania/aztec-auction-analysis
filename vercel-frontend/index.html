@@ -328,10 +328,9 @@
         </div>
     </div>
 
-    <script src="/public/_env.js"></script>
     <script>
-        // Get API URL from environment or use default
-        const API_BASE = window.DASHBOARD_API_URL || window.location.origin;
+        // Get API URL - hardcoded tunnel URL
+        const API_BASE = 'https://query-thereof-dialog-fifth.trycloudflare.com';
         
         let connectionOk = false;
 

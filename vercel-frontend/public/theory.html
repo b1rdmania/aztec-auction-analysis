@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Theory | Mathematical Foundations</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        nav {
+            background: white;
+            padding: 15px 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            padding: 10px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            color: #667eea;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        nav a:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+
+        nav a.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            line-height: 1.8;
+        }
+
+        h2 {
+            color: #667eea;
+            font-size: 2em;
+            margin: 40px 0 20px 0;
+            padding-top: 20px;
+            border-top: 2px solid #f0f0f0;
+        }
+
+        h2:first-child {
+            margin-top: 0;
+            padding-top: 0;
+            border-top: none;
+        }
+
+        h3 {
+            color: #764ba2;
+            font-size: 1.5em;
+            margin: 25px 0 15px 0;
+        }
+
+        .formula-box {
+            background: #f0f9ff;
+            border: 2px solid #0ea5e9;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 25px 0;
+            text-align: center;
+        }
+
+        .formula-box .label {
+            color: #0369a1;
+            font-weight: 600;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+        }
+
+        .derivation {
+            background: #f8fafc;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+        }
+
+        .highlight-box {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+        }
+
+        .highlight-box strong {
+            color: #92400e;
+        }
+
+        .concept-card {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .concept-card h4 {
+            color: #667eea;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+
+        ul {
+            margin: 15px 0 15px 30px;
+        }
+
+        li {
+            margin: 10px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: #f9fafb;
+        }
+
+        code {
+            background: #e0f2fe;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #0c4a6e;
+        }
+
+        .example-box {
+            background: #ecfdf5;
+            border: 2px solid #10b981;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .example-box h4 {
+            color: #065f46;
+            margin-bottom: 10px;
+        }
+
+        .warning-box {
+            background: #fee2e2;
+            border: 2px solid #ef4444;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .warning-box h4 {
+            color: #991b1b;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .content {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔬 Mathematical Theory</h1>
+            <p class="subtitle">Quantitative Foundations of Emotional Volatility Arbitrage</p>
+        </header>
+
+        <nav>
+            <a href="index.html">📊 Dashboard</a>
+            <a href="about.html">💡 Concept</a>
+            <a href="research.html">📚 Research</a>
+            <a href="system.html">⚙️ System</a>
+            <a href="theory.html" class="active">🔬 Theory</a>
+        </nav>
+
+        <div class="content">
+            <div class="highlight-box">
+                <strong>Warning:</strong> This page is intentionally math-heavy. It documents the theoretical foundations that underpin our trading models. For a high-level overview, see the <a href="about.html" style="color: #667eea;">Concept</a> page.
+            </div>
+
+            <h2>📐 1. Mean Reversion Framework</h2>
+
+            <h3>Ornstein-Uhlenbeck Process</h3>
+
+            <p>We model prediction market prices as following a mean-reverting stochastic process:</p>
+
+            <div class="formula-box">
+                <div class="label">Ornstein-Uhlenbeck SDE</div>
+                \[ dX_t = \theta(\mu - X_t)dt + \sigma dW_t \]
+            </div>
+
+            <p><strong>Where:</strong></p>
+            <ul>
+                <li>\(X_t\) = Current market price</li>
+                <li>\(\mu\) = Long-run equilibrium (mean)</li>
+                <li>\(\theta\) = Speed of mean reversion (higher = faster reversion)</li>
+                <li>\(\sigma\) = Volatility of the process</li>
+                <li>\(W_t\) = Wiener process (Brownian motion)</li>
+            </ul>
+
+            <p><strong>Intuition:</strong> When price deviates from \(\mu\), there's a force \(\theta(\mu - X_t)\) pulling it back. The further away, the stronger the pull.</p>
+
+            <h3>Z-Score Calculation</h3>
+
+            <p>We measure how far the current price has deviated from its mean in units of standard deviation:</p>
+
+            <div class="formula-box">
+                <div class="label">Z-Score</div>
+                \[ Z = \frac{X_t - \mu}{\sigma} \]
+            </div>
+
+            <p><strong>Trading Logic:</strong></p>
+            <ul>
+                <li>If \(Z > +2\): Price is 2σ above mean → <strong>SELL</strong> (overbought)</li>
+                <li>If \(Z < -2\): Price is 2σ below mean → <strong>BUY</strong> (oversold)</li>
+                <li>Higher |Z| = Stronger signal = Higher conviction</li>
+            </ul>
+
+            <div class="example-box">
+                <h4>📊 Example</h4>
+                <p>Trump election odds historically average 52% (μ) with σ = 8%.</p>
+                <p>Current price: 68%</p>
+                \[ Z = \frac{68 - 52}{8} = 2.0 \]
+                <p><strong>Signal:</strong> Price is 2σ too high → SELL (fade the spike)</p>
+            </div>
+
+            <h2>💰 2. Kelly Criterion (Optimal Position Sizing)</h2>
+
+            <p>How much should we bet on a given trade? The Kelly Criterion maximizes long-run growth while avoiding ruin:</p>
+
+            <div class="formula-box">
+                <div class="label">Kelly Formula</div>
+                \[ f^* = \frac{p \cdot b - q}{b} = \frac{\text{edge}}{\text{odds}} \]
+            </div>
+
+            <p><strong>Where:</strong></p>
+            <ul>
+                <li>\(f^*\) = Fraction of bankroll to bet</li>
+                <li>\(p\) = Probability of winning</li>
+                <li>\(q = 1-p\) = Probability of losing</li>
+                <li>\(b\) = Odds (payout ratio)</li>
+            </ul>
+
+            <h3>Fractional Kelly (Our Implementation)</h3>
+
+            <p>Full Kelly is aggressive and can lead to large drawdowns. We use <strong>fractional Kelly</strong>:</p>
+
+            <div class="formula-box">
+                <div class="label">Fractional Kelly</div>
+                \[ f_{\text{bet}} = k \cdot f^* \]
+                <p style="margin-top: 10px; font-size: 0.95em;">Where \(k\) = Kelly fraction (0.15–0.35 in our models)</p>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Model</th>
+                        <th>Kelly Fraction (k)</th>
+                        <th>Risk Profile</th>
+                        <th>Expected Drawdown</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Conservative</td>
+                        <td>0.15</td>
+                        <td>Very Low</td>
+                        <td>~10%</td>
+                    </tr>
+                    <tr>
+                        <td>Moderate</td>
+                        <td>0.25 (Quarter Kelly)</td>
+                        <td>Balanced</td>
+                        <td>~15%</td>
+                    </tr>
+                    <tr>
+                        <td>Aggressive</td>
+                        <td>0.35</td>
+                        <td>Higher</td>
+                        <td>~20%</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="example-box">
+                <h4>📊 Example</h4>
+                <p><strong>Scenario:</strong> Our model estimates 60% win probability, 1:1 odds</p>
+                \[ f^* = \frac{0.6 \times 1 - 0.4}{1} = 0.20 = 20\% \]
+                <p><strong>Conservative (k=0.15):</strong> Bet 0.15 × 20% = 3% of bankroll</p>
+                <p><strong>Moderate (k=0.25):</strong> Bet 0.25 × 20% = 5% of bankroll</p>
+                <p><strong>Aggressive (k=0.35):</strong> Bet 0.35 × 20% = 7% of bankroll</p>
+            </div>
+
+            <h2>📊 3. Signal Strength Quantification</h2>
+
+            <p>We classify signals into three strength levels based on multiple factors:</p>
+
+            <div class="concept-card">
+                <h4>Multi-Factor Signal Scoring</h4>
+                \[ S = w_1 \cdot |Z| + w_2 \cdot V + w_3 \cdot L + w_4 \cdot T \]
+                <p style="margin-top: 15px;"><strong>Factors:</strong></p>
+                <ul>
+                    <li>\(|Z|\) = Absolute z-score (deviation magnitude)</li>
+                    <li>\(V\) = Volatility spike indicator</li>
+                    <li>\(L\) = Liquidity/spread quality</li>
+                    <li>\(T\) = Time-to-event factor</li>
+                </ul>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Strength</th>
+                        <th>Z-Score</th>
+                        <th>Volatility</th>
+                        <th>Expected Edge</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>STRONG</strong></td>
+                        <td>|Z| > 2.5</td>
+                        <td>Spike > 15%</td>
+                        <td>5-10%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>MODERATE</strong></td>
+                        <td>1.5 < |Z| < 2.5</td>
+                        <td>Spike > 10%</td>
+                        <td>3-5%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>WEAK</strong></td>
+                        <td>1.0 < |Z| < 1.5</td>
+                        <td>Spike > 5%</td>
+                        <td>1-3%</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>⏱️ 4. Mean Reversion Horizon</h2>
+
+            <p>Based on Berg & Rietz (2018), mean reversion strength varies with time horizon:</p>
+
+            <div class="formula-box">
+                <div class="label">Half-Life of Mean Reversion</div>
+                \[ t_{1/2} = \frac{\ln(2)}{\theta} \]
+                <p style="margin-top: 10px; font-size: 0.95em;">Typical \(\theta\) for political markets: 0.05-0.15 day⁻¹</p>
+                <p style="margin-top: 5px; font-size: 0.95em;">Implies half-life: 5-14 days</p>
+            </div>
+
+            <p><strong>Our Target Holding Period:</strong> 7-21 days (optimal mean reversion window)</p>
+
+            <ul>
+                <li><strong>&lt; 3 days:</strong> Too noisy, hard to profit after fees</li>
+                <li><strong>7-21 days:</strong> Strong mean reversion, emotional correction completes</li>
+                <li><strong>&gt; 30 days:</strong> New information dominates, reversion weakens</li>
+            </ul>
+
+            <h2>📈 5. Expected Return Calculation</h2>
+
+            <p>For a mean-reverting trade, the expected profit depends on the current deviation and reversion speed:</p>
+
+            <div class="formula-box">
+                <div class="label">Expected Return</div>
+                \[ E[R] = (X_t - \mu) \cdot e^{-\theta t} \cdot (1 - \text{fees}) - \text{slippage} \]
+            </div>
+
+            <p><strong>Components:</strong></p>
+            <ul>
+                <li>\((X_t - \mu)\) = Current mispricing</li>
+                <li>\(e^{-\theta t}\) = Fraction of mispricing that closes in time \(t\)</li>
+                <li>Fees: Typically 2% on Polymarket (1% each side)</li>
+                <li>Slippage: 0.2-0.5% on average</li>
+            </ul>
+
+            <div class="example-box">
+                <h4>📊 Example</h4>
+                <p>Current price: 70%, Fair value: 60%, θ = 0.1, holding 10 days</p>
+                \[ E[R] = (70 - 60) \times e^{-0.1 \times 10} \times (1 - 0.02) - 0.5\% \]
+                \[ E[R] = 10 \times 0.368 \times 0.98 - 0.5\% = 3.6\% - 0.5\% = 3.1\% \]
+            </div>
+
+            <h2>🛡️ 6. Risk Metrics</h2>
+
+            <h3>Sharpe Ratio</h3>
+
+            <div class="formula-box">
+                <div class="label">Sharpe Ratio</div>
+                \[ \text{Sharpe} = \frac{E[R] - R_f}{\sigma_R} \]
+            </div>
+
+            <p><strong>Target:</strong> Sharpe > 1.0 (excess return greater than volatility)</p>
+
+            <h3>Maximum Drawdown</h3>
+
+            <div class="formula-box">
+                <div class="label">Max Drawdown</div>
+                \[ \text{MDD} = \max_{t} \left( \frac{\text{Peak}_t - \text{Value}_t}{\text{Peak}_t} \right) \]
+            </div>
+
+            <p><strong>Emergency Stop:</strong> If MDD exceeds 25%, halt trading and reassess</p>
+
+            <h3>Value at Risk (VaR)</h3>
+
+            <p>We estimate the 95% VaR for position sizing:</p>
+
+            <div class="formula-box">
+                <div class="label">95% VaR</div>
+                \[ \text{VaR}_{95\%} = \mu_R - 1.645 \times \sigma_R \]
+            </div>
+
+            <p>This tells us: "We expect to lose no more than VaR in 95% of cases."</p>
+
+            <h2>🎲 7. Win Rate vs Payoff Tradeoff</h2>
+
+            <p>Profitable trading requires:</p>
+
+            <div class="formula-box">
+                <div class="label">Profit Condition</div>
+                \[ p \cdot W - (1-p) \cdot L > 0 \]
+                <p style="margin-top: 10px; font-size: 0.95em;">Where \(p\) = win rate, \(W\) = avg win, \(L\) = avg loss</p>
+            </div>
+
+            <p><strong>Breakeven Analysis:</strong></p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Win Rate</th>
+                        <th>Required Win/Loss Ratio</th>
+                        <th>Example</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>50%</td>
+                        <td>1.0 (equal wins/losses)</td>
+                        <td>Win $100, Lose $100</td>
+                    </tr>
+                    <tr>
+                        <td>55%</td>
+                        <td>0.82</td>
+                        <td>Win $82, Lose $100</td>
+                    </tr>
+                    <tr>
+                        <td>60%</td>
+                        <td>0.67</td>
+                        <td>Win $67, Lose $100</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p><strong>Our Target:</strong> 55-60% win rate with 1.5:1 reward/risk ratio</p>
+
+            <h2>📉 8. Volatility Estimation</h2>
+
+            <h3>Historical Volatility</h3>
+
+            <div class="formula-box">
+                <div class="label">Sample Volatility</div>
+                \[ \sigma = \sqrt{\frac{1}{n-1} \sum_{i=1}^{n} (r_i - \bar{r})^2} \]
+            </div>
+
+            <p>Where \(r_i = \ln(P_i / P_{i-1})\) are log returns</p>
+
+            <h3>Exponentially Weighted Moving Average (EWMA)</h3>
+
+            <p>We use EWMA to give more weight to recent volatility:</p>
+
+            <div class="formula-box">
+                <div class="label">EWMA Volatility</div>
+                \[ \sigma_t^2 = \lambda \sigma_{t-1}^2 + (1-\lambda) r_t^2 \]
+                <p style="margin-top: 10px; font-size: 0.95em;">Typical \(\lambda\) = 0.94 (RiskMetrics standard)</p>
+            </div>
+
+            <h2>🎯 9. Execution Optimization</h2>
+
+            <h3>Implementation Shortfall</h3>
+
+            <div class="formula-box">
+                <div class="label">Implementation Shortfall</div>
+                \[ \text{IS} = \frac{P_{\text{executed}} - P_{\text{decision}}}{P_{\text{decision}}} \times 100\% \]
+            </div>
+
+            <p>We track this as "slippage" and aim for &lt;0.5% on average</p>
+
+            <h3>Optimal Order Size</h3>
+
+            <p>To minimize market impact, we limit order size relative to liquidity:</p>
+
+            <div class="formula-box">
+                <div class="label">Participation Rate</div>
+                \[ \text{MaxOrder} = \alpha \times \text{DailyVolume} \]
+                <p style="margin-top: 10px; font-size: 0.95em;">Typical \(\alpha\) = 0.01-0.05 (1-5% of daily volume)</p>
+            </div>
+
+            <h2>📚 10. Model Parameters Summary</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Symbol</th>
+                        <th>Conservative</th>
+                        <th>Moderate</th>
+                        <th>Aggressive</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Min Z-Score</td>
+                        <td>\(|Z|_{\min}\)</td>
+                        <td>2.5</td>
+                        <td>1.5</td>
+                        <td>1.0</td>
+                    </tr>
+                    <tr>
+                        <td>Kelly Fraction</td>
+                        <td>\(k\)</td>
+                        <td>0.15</td>
+                        <td>0.25</td>
+                        <td>0.35</td>
+                    </tr>
+                    <tr>
+                        <td>Max Position</td>
+                        <td>\(P_{\max}\)</td>
+                        <td>$200</td>
+                        <td>$500</td>
+                        <td>$800</td>
+                    </tr>
+                    <tr>
+                        <td>Holding Period</td>
+                        <td>\(t_h\)</td>
+                        <td>14-21 days</td>
+                        <td>7-14 days</td>
+                        <td>7-10 days</td>
+                    </tr>
+                    <tr>
+                        <td>Min Signal</td>
+                        <td>\(S_{\min}\)</td>
+                        <td>STRONG</td>
+                        <td>MODERATE</td>
+                        <td>WEAK</td>
+                    </tr>
+                    <tr>
+                        <td>Check Interval</td>
+                        <td>\(\Delta t\)</td>
+                        <td>10 min</td>
+                        <td>5 min</td>
+                        <td>3 min</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>⚠️ Limitations & Assumptions</h2>
+
+            <div class="warning-box">
+                <h4>🚨 Critical Assumptions</h4>
+                <ul>
+                    <li><strong>Stationarity:</strong> We assume μ and σ are constant over our trading horizon (not always true)</li>
+                    <li><strong>Normal distribution:</strong> Market returns may have fat tails (more extreme events than normal)</li>
+                    <li><strong>No regime changes:</strong> Major news can break mean reversion temporarily</li>
+                    <li><strong>Liquidity:</strong> We assume we can always execute at quoted prices (not guaranteed)</li>
+                    <li><strong>Historical patterns persist:</strong> Past mean reversion ≠ future guarantee</li>
+                </ul>
+            </div>
+
+            <div style="margin-top: 40px; padding: 25px; background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); border-radius: 15px;">
+                <h3 style="color: #667eea; margin-bottom: 15px;">📖 Further Reading</h3>
+                <ul>
+                    <li><a href="research.html" style="color: #667eea;">Academic Papers</a> - Full research database</li>
+                    <li><a href="https://github.com/b1rdmania/aztec-auction-analysis/blob/master/research/quant_mean_reversion_guide.md" target="_blank" style="color: #667eea;">718-Line Quant Guide</a> - Complete mathematical treatment</li>
+                    <li><a href="system.html" style="color: #667eea;">System Architecture</a> - How theory becomes code</li>
+                    <li><a href="index.html" style="color: #667eea;">Live Dashboard</a> - See the math in action</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
