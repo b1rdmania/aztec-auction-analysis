@@ -191,3 +191,4 @@ Just like @the_smart_ape showed:
 
 **Remember**: They made +86% with conservative params and -50% with aggressive ones. Parameter selection is the difference between winning and losing. Test everything! 🎯
 
+

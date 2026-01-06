@@ -3,262 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>System Architecture | Platform</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: #0A0E27;
-            color: #E8EAED;
-            line-height: 1.6;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        header {
-            background: #161B33;
-            padding: 24px 32px;
-            border-bottom: 1px solid #252A41;
-            margin-bottom: 24px;
-        }
-
-        h1 {
-            font-size: 24px;
-            font-weight: 600;
-            color: #FFFFFF;
-            margin-bottom: 4px;
-        }
-
-        .subtitle {
-            color: #9AA0A6;
-            font-size: 14px;
-        }
-
-        nav {
-            background: #161B33;
-            padding: 12px 32px;
-            border-bottom: 1px solid #252A41;
-            margin-bottom: 24px;
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        nav a {
-            padding: 8px 16px;
-            text-decoration: none;
-            color: #9AA0A6;
-            font-weight: 500;
-            font-size: 14px;
-            border-radius: 6px;
-            transition: all 0.2s;
-        }
-
-        nav a:hover {
-            background: #1F2544;
-            color: #FFFFFF;
-        }
-
-        nav a.active {
-            background: #1A73E8;
-            color: #FFFFFF;
-        }
-
-        .content {
-            background: #161B33;
-            border: 1px solid #252A41;
-            border-radius: 8px;
-            padding: 40px;
-        }
-
-        h2 {
-            color: #FFFFFF;
-            font-size: 20px;
-            font-weight: 600;
-            margin: 32px 0 16px 0;
-            padding-top: 16px;
-            border-top: 1px solid #252A41;
-        }
-
-        h2:first-child {
-            margin-top: 0;
-            padding-top: 0;
-            border-top: none;
-        }
-
-        p {
-            color: #BDC1C6;
-            margin-bottom: 16px;
-        }
-
-        .architecture-flow {
-            background: #1F2544;
-            padding: 24px;
-            border-radius: 6px;
-            margin: 20px 0;
-            border: 1px solid #252A41;
-        }
-
-        .flow-box {
-            background: #161B33;
-            border: 2px solid #1A73E8;
-            border-radius: 6px;
-            padding: 16px;
-            margin: 12px 0;
-            text-align: center;
-        }
-
-        .flow-box h3 {
-            color: #FFFFFF;
-            margin-bottom: 6px;
-            font-size: 15px;
-            font-weight: 600;
-        }
-
-        .flow-box p {
-            color: #9AA0A6;
-            font-size: 13px;
-            margin: 0;
-        }
-
-        .flow-arrow {
-            text-align: center;
-            font-size: 24px;
-            color: #1A73E8;
-            margin: 8px 0;
-        }
-
-        .component-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 16px;
-            margin: 20px 0;
-        }
-
-        .component-card {
-            background: #1F2544;
-            border-left: 3px solid #1A73E8;
-            padding: 16px;
-            border-radius: 6px;
-        }
-
-        .component-card h3 {
-            color: #FFFFFF;
-            margin-bottom: 8px;
-            font-size: 15px;
-            font-weight: 600;
-        }
-
-        .component-card code {
-            background: #0A0E27;
-            padding: 2px 6px;
-            border-radius: 3px;
-            font-family: 'Courier New', monospace;
-            font-size: 12px;
-            color: #1A73E8;
-        }
-
-        .component-card p {
-            font-size: 14px;
-            color: #9AA0A6;
-            margin: 0;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
-
-        th, td {
-            padding: 12px 16px;
-            text-align: left;
-            border-bottom: 1px solid #252A41;
-        }
-
-        th {
-            background: #1F2544;
-            color: #9AA0A6;
-            font-weight: 600;
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        td {
-            color: #BDC1C6;
-        }
-
-        tr:hover {
-            background: #1F2544;
-        }
-
-        ul {
-            margin: 12px 0 12px 24px;
-            color: #BDC1C6;
-        }
-
-        li {
-            margin: 8px 0;
-        }
-
-        pre {
-            background: #0A0E27;
-            color: #E8EAED;
-            padding: 20px;
-            border-radius: 6px;
-            overflow-x: auto;
-            font-size: 13px;
-            line-height: 1.5;
-        }
-
-        .tech-stack {
-            background: #1F2544;
-            padding: 20px;
-            border-radius: 6px;
-            margin: 20px 0;
-        }
-
-        .tech-stack h3 {
-            color: #FFFFFF;
-            margin-bottom: 12px;
-            font-size: 15px;
-            font-weight: 600;
-        }
-
-        .tech-badge {
-            display: inline-block;
-            background: #161B33;
-            border: 1px solid #1A73E8;
-            color: #1A73E8;
-            padding: 6px 12px;
-            border-radius: 4px;
-            margin: 4px;
-            font-weight: 500;
-            font-size: 13px;
-        }
-
-        @media (max-width: 768px) {
-            h1 { font-size: 20px; }
-            .content { padding: 24px; }
-            .component-grid { grid-template-columns: 1fr; }
-        }
-    </style>
+    <title>Trading Models | Platform</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>System Architecture</h1>
-            <p class="subtitle">Trading infrastructure</p>
+            <h1>trading models</h1>
+            <p class="subtitle">TRADING INFRASTRUCTURE</p>
         </header>
 
         <nav>
@@ -267,10 +19,10 @@
             <a href="ai-insights.html">AI Insights</a>
             <a href="quality.html">Quality</a>
             <a href="resolution.html">Resolution</a>
+            <a href="system.html" class="active">Trading Models</a>
             <a href="about.html">Strategy</a>
             <a href="research.html">Research</a>
-            <a href="system.html" class="active">System</a>
-            <a href="theory.html">Models</a>
+            <a href="theory.html">Theory</a>
         </nav>
 
         <div class="content">
@@ -542,16 +294,21 @@ docker-compose.yml          Multi-container orchestration</pre>
                 </div>
             </div>
 
-            <div style="margin-top: 32px; padding: 20px; background: #1F2544; border-radius: 6px;">
-                <p style="margin-bottom: 12px;"><strong>Additional Resources:</strong></p>
-                <ul style="margin-left: 20px;">
-                    <li>See <a href="theory.html" style="color: #1A73E8; text-decoration: none;">Models</a> for mathematical foundations</li>
-                    <li>View <a href="index.html" style="color: #1A73E8; text-decoration: none;">Dashboard</a> for live performance</li>
-                    <li>Read <a href="research.html" style="color: #1A73E8; text-decoration: none;">Research</a> for academic sources</li>
-                    <li>Check <a href="https://github.com/b1rdmania/aztec-auction-analysis" target="_blank" style="color: #1A73E8; text-decoration: none;">GitHub</a> for source code</li>
+            <div class="highlight-box">
+                <p><strong>Additional Resources:</strong></p>
+                <ul>
+                    <li>See <a href="theory.html">Models</a> for mathematical foundations</li>
+                    <li>View <a href="index.html">Dashboard</a> for live performance</li>
+                    <li>Read <a href="research.html">Research</a> for academic sources</li>
+                    <li>Check <a href="https://github.com/b1rdmania/aztec-auction-analysis" target="_blank">GitHub</a> for source code</li>
                 </ul>
             </div>
         </div>
+
+        <footer>
+            <p>Polymarket API Test Trading Protocol</p>
+            <p><a href="https://github.com/b1rdmania/aztec-auction-analysis">GitHub Repository</a></p>
+        </footer>
     </div>
 </body>
 </html>

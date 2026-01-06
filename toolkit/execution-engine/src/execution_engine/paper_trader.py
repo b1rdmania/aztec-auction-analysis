@@ -259,3 +259,4 @@ class PaperTrader:
         
         logger.info(f"Report saved to {report_path}")
 
+

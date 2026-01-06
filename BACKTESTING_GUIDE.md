@@ -309,3 +309,4 @@ Try:
 
 **Remember**: @the_smart_ape made +86% with the RIGHT parameters and -50% with the WRONG ones. Backtest to find what works! 🎯
 
+

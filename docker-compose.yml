@@ -87,6 +87,8 @@ services:
       - ./data:/app/data
       - ./logs:/app/logs
       - ./dashboard:/app/dashboard
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
     command: python3 api/dashboard_api.py
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
@@ -106,4 +108,5 @@ networks:
 volumes:
   data:
   logs:
+
 

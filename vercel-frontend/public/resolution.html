@@ -3,312 +3,148 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resolution Tracker | Polymarket AI Trading Protocol</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📊</text></svg>">
+    <title>Resolution Tracker | Platform</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>resolution tracker</h1>
+            <p class="subtitle">AUTOMATED MARKET RESOLUTION + ACCURACY TRACKING</p>
+        </header>
+
+        <nav>
+            <a href="index.html">Dashboard</a>
+            <a href="signals.html">Signals</a>
+            <a href="ai-insights.html">AI Insights</a>
+            <a href="quality.html">Quality</a>
+            <a href="resolution.html" class="active">Resolution</a>
+            <a href="system.html">Trading Models</a>
+            <a href="about.html">Strategy</a>
+            <a href="research.html">Research</a>
+            <a href="theory.html">Theory</a>
+        </nav>
+
+        <div class="content">
+            <div class="formula-box" style="background: var(--color-gray-light);">
+                <div class="label">Overall AI Prediction Accuracy</div>
+                <div id="accuracy-value" style="font-size: 3rem; font-weight: 700; color: var(--color-black);">-</div>
+                <p id="accuracy-subtitle" style="color: var(--color-gray-mid); margin-top: 8px;">Loading accuracy data...</p>
+            </div>
+
+            <div class="research-grid">
+                <div class="stat-box">
+                    <div style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-gray-mid); margin-bottom: 4px;">Total Resolved</div>
+                    <strong id="total-resolved" style="font-size: 1.5rem;">-</strong>
+                </div>
+                <div class="stat-box">
+                    <div style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-gray-mid); margin-bottom: 4px;">Correct Predictions</div>
+                    <strong id="correct-predictions" style="font-size: 1.5rem; color: #2E7D32;">-</strong>
+                </div>
+                <div class="stat-box">
+                    <div style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-gray-mid); margin-bottom: 4px;">Recent Resolutions</div>
+                    <strong id="recent-count" style="font-size: 1.5rem;">-</strong>
+                </div>
+            </div>
+
+            <h2>Recently Resolved Markets</h2>
+
+            <div class="highlight-box">
+                <strong>Automated Resolution via Smart Contracts</strong> — Markets are resolved automatically when outcome conditions are met
+            </div>
+
+            <div id="resolutions-list">
+                <p style="text-align: center; color: var(--color-gray-mid);">Loading resolved markets...</p>
+            </div>
+        </div>
+
+        <footer>
+            <p>Polymarket API Test Trading Protocol</p>
+            <p><a href="https://github.com/b1rdmania/aztec-auction-analysis">GitHub Repository</a></p>
+        </footer>
+    </div>
+
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
-            background: #0D1117;
-            color: #E8EAED;
-            line-height: 1.6;
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        header {
-            margin-bottom: 40px;
-            border-bottom: 1px solid #252A41;
-            padding-bottom: 20px;
-        }
-
-        h1 {
-            font-size: 32px;
-            font-weight: 700;
-            color: #E8EAED;
-            margin-bottom: 8px;
-            letter-spacing: -0.5px;
-        }
-
-        .subtitle {
-            font-size: 16px;
-            color: #9AA0A6;
-            margin-bottom: 24px;
-        }
-
-        .main-nav {
-            display: flex;
-            gap: 24px;
-            margin-top: 20px;
-        }
-
-        .nav-item {
-            text-decoration: none;
-            color: #9AA0A6;
-            font-size: 14px;
-            font-weight: 500;
-            padding: 8px 0;
-            border-bottom: 2px solid transparent;
-            transition: all 0.2s;
-        }
-
-        .nav-item:hover {
-            color: #E8EAED;
-        }
-
-        .nav-item.active {
-            color: #1A73E8;
-            border-bottom-color: #1A73E8;
-        }
-
-        .accuracy-banner {
-            background: linear-gradient(135deg, #1A73E8, #34A853);
-            border-radius: 12px;
-            padding: 32px;
-            margin-bottom: 32px;
-            text-align: center;
-        }
-
-        .accuracy-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.9);
-            margin-bottom: 12px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .accuracy-value {
-            font-size: 64px;
-            font-weight: 700;
-            color: white;
-            margin-bottom: 8px;
-        }
-
-        .accuracy-subtitle {
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.8);
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-bottom: 32px;
-        }
-
-        .stat-card {
-            background: #1F2544;
-            border: 1px solid #252A41;
-            border-radius: 8px;
-            padding: 20px;
-        }
-
-        .stat-label {
-            font-size: 12px;
-            color: #9AA0A6;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .stat-value {
-            font-size: 28px;
-            font-weight: 700;
-            color: #E8EAED;
-        }
-
-        .resolutions-list {
-            display: grid;
-            gap: 16px;
-        }
-
         .resolution-card {
-            background: #161B33;
-            border: 1px solid #252A41;
-            border-radius: 8px;
+            background: var(--color-gray-light);
+            border: 1px solid var(--color-black);
             padding: 24px;
-            transition: all 0.2s;
+            margin: 16px 0;
         }
-
-        .resolution-card:hover {
-            border-color: #1A73E8;
-            background: #1A1F36;
-        }
-
         .resolution-question {
-            font-size: 16px;
             font-weight: 500;
-            color: #E8EAED;
+            color: var(--color-black);
             margin-bottom: 16px;
             line-height: 1.4;
         }
-
-        .resolution-details {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            padding-top: 16px;
-            border-top: 1px solid #252A41;
-        }
-
-        .detail-item {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .detail-label {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: #9AA0A6;
-            font-weight: 600;
-        }
-
-        .detail-value {
-            font-size: 16px;
-            font-weight: 600;
-            color: #E8EAED;
-        }
-
         .prediction-badge {
             display: inline-flex;
             align-items: center;
             gap: 8px;
             padding: 8px 16px;
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: 600;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            border: 1px solid var(--color-black);
             margin-bottom: 16px;
         }
-
         .prediction-correct {
-            background: rgba(52, 168, 83, 0.15);
-            border: 1px solid rgba(52, 168, 83, 0.3);
-            color: #34A853;
+            background: #E8F5E9;
+            color: #2E7D32;
+            border-color: #2E7D32;
         }
-
         .prediction-incorrect {
-            background: rgba(234, 67, 53, 0.15);
-            border: 1px solid rgba(234, 67, 53, 0.3);
-            color: #EA4335;
+            background: #FFEBEE;
+            color: #C62828;
+            border-color: #C62828;
         }
-
         .prediction-pending {
-            background: rgba(245, 158, 11, 0.15);
-            border: 1px solid rgba(245, 158, 11, 0.3);
-            color: #F59E0B;
+            background: #FFF3E0;
+            color: #E65100;
+            border-color: #E65100;
         }
-
         .no-prediction {
-            background: rgba(154, 160, 166, 0.1);
-            border: 1px solid rgba(154, 160, 166, 0.2);
-            color: #9AA0A6;
+            background: var(--color-white);
+            color: var(--color-gray-mid);
         }
-
-        .pnl-positive {
-            color: #34A853;
+        .resolution-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--color-black);
         }
-
-        .pnl-negative {
-            color: #EA4335;
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
         }
-
-        .loading {
-            text-align: center;
-            padding: 60px 20px;
-            color: #9AA0A6;
-            font-size: 14px;
+        .detail-label {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--color-gray-mid);
         }
-
-        .automation-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 4px 12px;
-            background: rgba(26, 115, 232, 0.1);
-            border: 1px solid rgba(26, 115, 232, 0.3);
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 600;
-            color: #1A73E8;
+        .detail-value {
+            font-weight: 500;
+            color: var(--color-black);
         }
+        .pnl-positive { color: #2E7D32; }
+        .pnl-negative { color: #C62828; }
     </style>
-</head>
-<body>
-    <div class="container">
-        <header>
-            <h1>Resolution Tracker</h1>
-            <p class="subtitle">Automated market resolution and AI prediction accuracy tracking</p>
-            <nav class="main-nav">
-                <a href="index.html" class="nav-item">Dashboard</a>
-                <a href="signals.html" class="nav-item">Signals</a>
-                <a href="ai-insights.html" class="nav-item">AI Insights</a>
-                <a href="quality.html" class="nav-item">Quality Scoring</a>
-                <a href="resolution.html" class="nav-item active">Resolution</a>
-                <a href="about.html" class="nav-item">Strategy</a>
-            </nav>
-        </header>
-
-        <div class="accuracy-banner">
-            <div class="accuracy-title">Overall AI Prediction Accuracy</div>
-            <div class="accuracy-value" id="accuracy-value">-</div>
-            <div class="accuracy-subtitle" id="accuracy-subtitle">Loading accuracy data...</div>
-        </div>
-
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-label">Total Resolved</div>
-                <div class="stat-value" id="total-resolved">-</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Correct Predictions</div>
-                <div class="stat-value" id="correct-predictions" style="color: #34A853;">-</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Recent Resolutions</div>
-                <div class="stat-value" id="recent-count">-</div>
-            </div>
-        </div>
-
-        <div style="margin-bottom: 20px;">
-            <h2 style="font-size: 20px; font-weight: 600; color: #E8EAED; margin-bottom: 16px;">Recently Resolved Markets</h2>
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <span class="automation-badge">
-                    <span>⚡</span>
-                    <span>Automated Resolution via Smart Contracts</span>
-                </span>
-            </div>
-        </div>
-
-        <div class="resolutions-list" id="resolutions-list">
-            <div class="loading">Loading resolved markets...</div>
-        </div>
-    </div>
 
     <script>
-        const API_BASE = 'https://turtle-proved-thereby-gateway.trycloudflare.com';
+        const API_BASE = 'https://postposted-spent-knife-given.trycloudflare.com';
 
         async function fetchAccuracy() {
             try {
                 const response = await fetch(`${API_BASE}/api/resolution/accuracy`);
                 if (!response.ok) throw new Error('Failed to fetch accuracy');
                 const data = await response.json();
-                
+
                 document.getElementById('accuracy-value').textContent = data.accuracy.toFixed(1) + '%';
-                document.getElementById('accuracy-subtitle').textContent = 
+                document.getElementById('accuracy-subtitle').textContent =
                     `${data.correct_predictions} correct out of ${data.total_resolved} resolved predictions`;
                 document.getElementById('total-resolved').textContent = data.total_resolved;
                 document.getElementById('correct-predictions').textContent = data.correct_predictions;
@@ -322,21 +158,21 @@
                 const response = await fetch(`${API_BASE}/api/resolution/recent?limit=30`);
                 if (!response.ok) throw new Error('Failed to fetch resolutions');
                 const data = await response.json();
-                
+
                 document.getElementById('recent-count').textContent = data.resolutions.length;
                 renderResolutions(data.resolutions || []);
             } catch (error) {
                 console.error('Error fetching resolutions:', error);
-                document.getElementById('resolutions-list').innerHTML = 
-                    '<div class="loading">Failed to load resolutions</div>';
+                document.getElementById('resolutions-list').innerHTML =
+                    '<p style="text-align: center; color: var(--color-gray-mid);">Failed to load resolutions</p>';
             }
         }
 
         function renderResolutions(resolutions) {
             const list = document.getElementById('resolutions-list');
-            
+
             if (resolutions.length === 0) {
-                list.innerHTML = '<div class="loading">No resolved markets found</div>';
+                list.innerHTML = '<p style="text-align: center; color: var(--color-gray-mid);">No resolved markets found</p>';
                 return;
             }
 
@@ -347,12 +183,12 @@
 
                 if (prediction) {
                     const pnlClass = prediction.pnl > 0 ? 'pnl-positive' : 'pnl-negative';
-                    const status = prediction.status === 'CLOSED' 
+                    const status = prediction.status === 'CLOSED'
                         ? (prediction.pnl > 0 ? 'prediction-correct' : 'prediction-incorrect')
                         : 'prediction-pending';
                     const statusText = prediction.status === 'CLOSED'
-                        ? (prediction.pnl > 0 ? '✓ Correct Prediction' : '✗ Incorrect Prediction')
-                        : '⏳ Pending Resolution';
+                        ? (prediction.pnl > 0 ? 'Correct Prediction' : 'Incorrect Prediction')
+                        : 'Pending Resolution';
 
                     predictionBadge = `<div class="prediction-badge ${status}">${statusText}</div>`;
                     predictionDetails = `
@@ -366,7 +202,7 @@
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">Entry Price</div>
-                            <div class="detail-value">${(prediction.price * 100).toFixed(1)}¢</div>
+                            <div class="detail-value">${(prediction.price * 100).toFixed(1)}c</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">P&L</div>
@@ -378,7 +214,7 @@
                     predictionDetails = `
                         <div class="detail-item">
                             <div class="detail-label">Status</div>
-                            <div class="detail-value" style="color: #9AA0A6;">Not Traded</div>
+                            <div class="detail-value" style="color: var(--color-gray-mid);">Not Traded</div>
                         </div>
                     `;
                 }
@@ -395,7 +231,7 @@
                             </div>
                             <div class="detail-item">
                                 <div class="detail-label">Resolution</div>
-                                <div class="detail-value" style="color: #1A73E8;">Automated</div>
+                                <div class="detail-value" style="color: var(--color-accent);">Automated</div>
                             </div>
                         </div>
                     </div>
@@ -403,11 +239,9 @@
             }).join('');
         }
 
-        // Initial load
         fetchAccuracy();
         fetchResolutions();
-        
-        // Refresh every 60 seconds
+
         setInterval(() => {
             fetchAccuracy();
             fetchResolutions();
@@ -415,4 +249,3 @@
     </script>
 </body>
 </html>
-

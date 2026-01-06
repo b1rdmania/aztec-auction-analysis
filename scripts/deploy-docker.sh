@@ -23,3 +23,4 @@ docker run -d \
 echo "Container started. View logs with:"
 echo "  docker logs -f systematic-trader"
 
+

@@ -289,3 +289,4 @@ actual_slippage_pct = ((executed_price - signal.entry_price) / signal.entry_pric
 
 Built: 2026-01-04
 
+

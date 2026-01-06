@@ -306,3 +306,4 @@ sqlite3 data/trades_moderate.db "SELECT * FROM trades"
 
 **Next**: Run `python3 scripts/start_models.py` 🚀
 
+

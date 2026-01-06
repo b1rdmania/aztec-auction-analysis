@@ -60,3 +60,4 @@ echo "  open http://localhost:8000"
 echo "  python3 scripts/monitor_models.py"
 echo ""
 
+

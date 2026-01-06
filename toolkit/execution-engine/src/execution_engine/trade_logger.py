@@ -288,3 +288,4 @@ class TradeLogger:
             "avg_loss": 0,
         }
 
+

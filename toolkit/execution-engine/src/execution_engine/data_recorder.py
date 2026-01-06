@@ -139,3 +139,4 @@ class MarketDataRecorder:
             "data_directory": str(self.data_dir)
         }
 
+

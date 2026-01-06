@@ -96,3 +96,4 @@ else
     echo "Or run: docker-compose logs"
 fi
 
+

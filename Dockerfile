@@ -23,7 +23,8 @@ RUN pip install --no-cache-dir \
     httpx \
     pydantic \
     python-dotenv \
-    pyyaml
+    pyyaml \
+    openai
 
 # Install local packages
 RUN cd /app/toolkit/execution-engine && pip install -e . || true

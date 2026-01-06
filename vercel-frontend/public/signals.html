@@ -3,361 +3,151 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Signal Feed | Polymarket AI Trading Protocol</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📊</text></svg>">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
-            background: #0D1117;
-            color: #E8EAED;
-            line-height: 1.6;
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        header {
-            margin-bottom: 40px;
-            border-bottom: 1px solid #252A41;
-            padding-bottom: 20px;
-        }
-
-        h1 {
-            font-size: 32px;
-            font-weight: 700;
-            color: #E8EAED;
-            margin-bottom: 8px;
-            letter-spacing: -0.5px;
-        }
-
-        .subtitle {
-            font-size: 16px;
-            color: #9AA0A6;
-            margin-bottom: 24px;
-        }
-
-        .main-nav {
-            display: flex;
-            gap: 24px;
-            margin-top: 20px;
-        }
-
-        .nav-item {
-            text-decoration: none;
-            color: #9AA0A6;
-            font-size: 14px;
-            font-weight: 500;
-            padding: 8px 0;
-            border-bottom: 2px solid transparent;
-            transition: all 0.2s;
-        }
-
-        .nav-item:hover {
-            color: #E8EAED;
-        }
-
-        .nav-item.active {
-            color: #1A73E8;
-            border-bottom-color: #1A73E8;
-        }
-
-        .live-indicator {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 16px 24px;
-            background: #1F2544;
-            border: 1px solid #252A41;
-            border-radius: 8px;
-            margin-bottom: 24px;
-        }
-
-        .pulse-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #34A853;
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(1.1); }
-        }
-
-        .live-text {
-            font-size: 14px;
-            font-weight: 600;
-            color: #34A853;
-        }
-
-        .filters {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 24px;
-            flex-wrap: wrap;
-        }
-
-        .filter-btn {
-            padding: 8px 16px;
-            background: #1F2544;
-            border: 1px solid #252A41;
-            border-radius: 6px;
-            color: #9AA0A6;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .filter-btn:hover {
-            border-color: #1A73E8;
-            color: #1A73E8;
-        }
-
-        .filter-btn.active {
-            background: #1A73E8;
-            color: white;
-            border-color: #1A73E8;
-        }
-
-        .signals-grid {
-            display: grid;
-            gap: 16px;
-        }
-
-        .signal-card {
-            background: #161B33;
-            border: 1px solid #252A41;
-            border-radius: 8px;
-            padding: 20px;
-            transition: all 0.2s;
-        }
-
-        .signal-card:hover {
-            border-color: #1A73E8;
-            background: #1A1F36;
-        }
-
-        .signal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 16px;
-        }
-
-        .signal-market {
-            flex: 1;
-            font-size: 15px;
-            font-weight: 500;
-            color: #E8EAED;
-            line-height: 1.4;
-        }
-
-        .signal-timestamp {
-            font-size: 12px;
-            color: #9AA0A6;
-            white-space: nowrap;
-            margin-left: 16px;
-        }
-
-        .signal-details {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 16px;
-            margin-top: 16px;
-        }
-
-        .signal-detail {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .signal-label {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: #9AA0A6;
-            font-weight: 600;
-        }
-
-        .signal-value {
-            font-size: 16px;
-            font-weight: 600;
-            color: #E8EAED;
-        }
-
-        .direction-buy {
-            color: #34A853;
-        }
-
-        .direction-sell {
-            color: #EA4335;
-        }
-
-        .strength-strong {
-            color: #1A73E8;
-        }
-
-        .strength-moderate {
-            color: #F59E0B;
-        }
-
-        .strength-weak {
-            color: #9AA0A6;
-        }
-
-        .model-badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: capitalize;
-        }
-
-        .model-conservative {
-            background: rgba(26, 115, 232, 0.1);
-            color: #1A73E8;
-        }
-
-        .model-moderate {
-            background: rgba(245, 158, 11, 0.1);
-            color: #F59E0B;
-        }
-
-        .model-aggressive {
-            background: rgba(234, 67, 53, 0.1);
-            color: #EA4335;
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .status-open {
-            background: rgba(52, 168, 83, 0.1);
-            color: #34A853;
-        }
-
-        .status-closed {
-            background: rgba(154, 160, 166, 0.1);
-            color: #9AA0A6;
-        }
-
-        .pnl-positive {
-            color: #34A853;
-        }
-
-        .pnl-negative {
-            color: #EA4335;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 60px 20px;
-            color: #9AA0A6;
-            font-size: 14px;
-        }
-
-        .stats-bar {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-bottom: 32px;
-        }
-
-        .stat-card {
-            background: #1F2544;
-            border: 1px solid #252A41;
-            border-radius: 8px;
-            padding: 20px;
-        }
-
-        .stat-label {
-            font-size: 12px;
-            color: #9AA0A6;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .stat-value {
-            font-size: 28px;
-            font-weight: 700;
-            color: #E8EAED;
-        }
-    </style>
+    <title>Live Signals | Platform</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Live Signal Feed</h1>
-            <p class="subtitle">Real-time AI-generated trading signals from all models</p>
-            <nav class="main-nav">
-                <a href="index.html" class="nav-item">Dashboard</a>
-                <a href="signals.html" class="nav-item active">Signals</a>
-                <a href="ai-insights.html" class="nav-item">AI Insights</a>
-                <a href="quality.html" class="nav-item">Quality Scoring</a>
-                <a href="resolution.html" class="nav-item">Resolution</a>
-                <a href="about.html" class="nav-item">Strategy</a>
-            </nav>
+            <h1>live signal feed</h1>
+            <p class="subtitle">REAL-TIME AI-GENERATED TRADING SIGNALS</p>
         </header>
 
-        <div class="live-indicator">
-            <div class="pulse-dot"></div>
-            <span class="live-text">Live Stream Active</span>
-            <span style="color: #9AA0A6; font-size: 13px; margin-left: auto;">Updates every 10 seconds</span>
+        <nav>
+            <a href="index.html">Dashboard</a>
+            <a href="signals.html" class="active">Signals</a>
+            <a href="ai-insights.html">AI Insights</a>
+            <a href="quality.html">Quality</a>
+            <a href="resolution.html">Resolution</a>
+            <a href="system.html">Trading Models</a>
+            <a href="about.html">Strategy</a>
+            <a href="research.html">Research</a>
+            <a href="theory.html">Theory</a>
+        </nav>
+
+        <div class="content">
+            <div class="highlight-box">
+                <strong>Live Stream Active</strong> — Updates every 10 seconds from all AI models
+            </div>
+
+            <div class="research-grid" id="stats-bar">
+                <div class="stat-box">
+                    <div style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-gray-mid); margin-bottom: 4px;">Total Signals</div>
+                    <strong id="stat-total">-</strong>
+                </div>
+                <div class="stat-box">
+                    <div style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-gray-mid); margin-bottom: 4px;">Active Positions</div>
+                    <strong id="stat-active">-</strong>
+                </div>
+                <div class="stat-box">
+                    <div style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-gray-mid); margin-bottom: 4px;">Signals Today</div>
+                    <strong id="stat-today">-</strong>
+                </div>
+            </div>
+
+            <h2>Filter Signals</h2>
+            <div class="tech-stack">
+                <button class="tech-badge filter-btn active" data-filter="all">All Signals</button>
+                <button class="tech-badge filter-btn" data-filter="conservative">Conservative</button>
+                <button class="tech-badge filter-btn" data-filter="moderate">Moderate</button>
+                <button class="tech-badge filter-btn" data-filter="aggressive">Aggressive</button>
+                <button class="tech-badge filter-btn" data-filter="STRONG">Strong Only</button>
+                <button class="tech-badge filter-btn" data-filter="BUY">Buy Only</button>
+                <button class="tech-badge filter-btn" data-filter="SELL">Sell Only</button>
+            </div>
+
+            <h2>Signal Feed</h2>
+            <div id="signals-grid">
+                <p style="text-align: center; color: var(--color-gray-mid);">Loading live signals...</p>
+            </div>
         </div>
 
-        <div class="stats-bar" id="stats-bar">
-            <div class="stat-card">
-                <div class="stat-label">Total Signals</div>
-                <div class="stat-value">-</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Active Positions</div>
-                <div class="stat-value">-</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Signals Today</div>
-                <div class="stat-value">-</div>
-            </div>
-        </div>
-
-        <div class="filters">
-            <button class="filter-btn active" data-filter="all">All Signals</button>
-            <button class="filter-btn" data-filter="conservative">Conservative</button>
-            <button class="filter-btn" data-filter="moderate">Moderate</button>
-            <button class="filter-btn" data-filter="aggressive">Aggressive</button>
-            <button class="filter-btn" data-filter="STRONG">Strong Only</button>
-            <button class="filter-btn" data-filter="BUY">Buy Only</button>
-            <button class="filter-btn" data-filter="SELL">Sell Only</button>
-        </div>
-
-        <div class="signals-grid" id="signals-grid">
-            <div class="loading">Loading live signals...</div>
-        </div>
+        <footer>
+            <p>Polymarket API Test Trading Protocol</p>
+            <p><a href="https://github.com/b1rdmania/aztec-auction-analysis">GitHub Repository</a></p>
+        </footer>
     </div>
 
+    <style>
+        .filter-btn {
+            cursor: pointer;
+            transition: all 0.15s ease;
+            border: 1px solid var(--color-black);
+        }
+        .filter-btn:hover {
+            background: var(--color-gray-light);
+        }
+        .filter-btn.active {
+            background: var(--color-black);
+            color: var(--color-white);
+        }
+        .signal-card {
+            background: var(--color-gray-light);
+            border: 1px solid var(--color-black);
+            padding: 20px;
+            margin: 12px 0;
+        }
+        .signal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        .signal-market {
+            font-weight: 500;
+            color: var(--color-black);
+            flex: 1;
+            margin-right: 16px;
+        }
+        .signal-timestamp {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--color-gray-mid);
+        }
+        .signal-badges {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .model-badge, .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            border: 1px solid var(--color-black);
+        }
+        .model-conservative { background: #E3F2FD; color: #1565C0; }
+        .model-moderate { background: #FFF3E0; color: #E65100; }
+        .model-aggressive { background: #FFEBEE; color: #C62828; }
+        .status-open { background: #E8F5E9; color: #2E7D32; }
+        .status-closed { background: var(--color-gray-light); color: var(--color-gray-mid); }
+        .signal-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--color-black);
+        }
+        .signal-detail-label {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            color: var(--color-gray-mid);
+            margin-bottom: 2px;
+        }
+        .signal-detail-value {
+            font-weight: 500;
+            color: var(--color-black);
+        }
+        .direction-buy { color: #2E7D32; }
+        .direction-sell { color: #C62828; }
+        .pnl-positive { color: #2E7D32; }
+        .pnl-negative { color: #C62828; }
+    </style>
+
     <script>
-        const API_BASE = 'https://turtle-proved-thereby-gateway.trycloudflare.com';
+        const API_BASE = 'https://postposted-spent-knife-given.trycloudflare.com';
         let allSignals = [];
         let currentFilter = 'all';
 
@@ -379,25 +169,25 @@
             const todaySignals = allSignals.filter(s => s.timestamp.startsWith(today));
             const activeSignals = allSignals.filter(s => s.status === 'OPEN');
 
-            document.querySelectorAll('.stat-value')[0].textContent = allSignals.length;
-            document.querySelectorAll('.stat-value')[1].textContent = activeSignals.length;
-            document.querySelectorAll('.stat-value')[2].textContent = todaySignals.length;
+            document.getElementById('stat-total').textContent = allSignals.length;
+            document.getElementById('stat-active').textContent = activeSignals.length;
+            document.getElementById('stat-today').textContent = todaySignals.length;
         }
 
         function renderSignals() {
             const grid = document.getElementById('signals-grid');
-            
+
             let filtered = allSignals;
             if (currentFilter !== 'all') {
-                filtered = allSignals.filter(s => 
-                    s.model === currentFilter || 
+                filtered = allSignals.filter(s =>
+                    s.model === currentFilter ||
                     s.strength === currentFilter ||
                     s.direction === currentFilter
                 );
             }
 
             if (filtered.length === 0) {
-                grid.innerHTML = '<div class="loading">No signals found</div>';
+                grid.innerHTML = '<p style="text-align: center; color: var(--color-gray-mid);">No signals found</p>';
                 return;
             }
 
@@ -412,32 +202,32 @@
                             <div class="signal-market">${signal.market}</div>
                             <div class="signal-timestamp">${timestamp}</div>
                         </div>
-                        
-                        <div style="display: flex; gap: 8px; margin-bottom: 12px;">
-                            <span class="model-badge model-${signal.model}">${signal.model} AI</span>
+
+                        <div class="signal-badges">
+                            <span class="model-badge model-${signal.model}">${signal.model}</span>
                             <span class="status-badge status-${signal.status.toLowerCase()}">${signal.status}</span>
                         </div>
 
                         <div class="signal-details">
-                            <div class="signal-detail">
-                                <div class="signal-label">Direction</div>
-                                <div class="signal-value direction-${signal.direction.toLowerCase()}">${signal.direction}</div>
+                            <div>
+                                <div class="signal-detail-label">Direction</div>
+                                <div class="signal-detail-value direction-${signal.direction.toLowerCase()}">${signal.direction}</div>
                             </div>
-                            <div class="signal-detail">
-                                <div class="signal-label">Strength</div>
-                                <div class="signal-value strength-${signal.strength.toLowerCase()}">${signal.strength}</div>
+                            <div>
+                                <div class="signal-detail-label">Strength</div>
+                                <div class="signal-detail-value">${signal.strength}</div>
                             </div>
-                            <div class="signal-detail">
-                                <div class="signal-label">Entry Price</div>
-                                <div class="signal-value">${(signal.entry_price * 100).toFixed(1)}¢</div>
+                            <div>
+                                <div class="signal-detail-label">Entry</div>
+                                <div class="signal-detail-value">${(signal.entry_price * 100).toFixed(1)}c</div>
                             </div>
-                            <div class="signal-detail">
-                                <div class="signal-label">Size</div>
-                                <div class="signal-value">$${signal.size.toFixed(0)}</div>
+                            <div>
+                                <div class="signal-detail-label">Size</div>
+                                <div class="signal-detail-value">$${signal.size.toFixed(0)}</div>
                             </div>
-                            <div class="signal-detail">
-                                <div class="signal-label">P&L</div>
-                                <div class="signal-value ${pnlClass}">${pnlDisplay}</div>
+                            <div>
+                                <div class="signal-detail-label">P&L</div>
+                                <div class="signal-detail-value ${pnlClass}">${pnlDisplay}</div>
                             </div>
                         </div>
                     </div>
@@ -445,7 +235,6 @@
             }).join('');
         }
 
-        // Filter handling
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -455,10 +244,8 @@
             });
         });
 
-        // Initial load and periodic updates
         fetchSignals();
         setInterval(fetchSignals, 10000);
     </script>
 </body>
 </html>
-
