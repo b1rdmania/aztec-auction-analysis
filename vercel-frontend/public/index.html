@@ -44,7 +44,10 @@
             <div class="card" style="margin-bottom: 24px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
                     <h4 style="margin: 0;">Live Market Data Stream</h4>
-                    <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--color-success);">● Polymarket API Connected</span>
+                    <div style="display: flex; gap: 16px; align-items: center;">
+                        <span id="api-status" style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--color-gray-mid);">● Connecting...</span>
+                        <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--color-success);">● Polymarket API</span>
+                    </div>
                 </div>
                 <div id="market-ticker" style="display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px;">
                     <div class="ticker-item">
@@ -96,14 +99,14 @@
                 <div class="stat-box">
                     <div style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-gray-mid); margin-bottom: 4px;">Last Update</div>
                     <strong id="last-update" style="font-size: 1rem;">-</strong>
-                </div>
             </div>
+        </div>
 
             <!-- Model Cards -->
             <h2>AI Models</h2>
             <div id="models-grid" class="research-grid">
                 <p style="text-align: center; color: var(--color-gray-mid);">Loading AI models...</p>
-            </div>
+        </div>
 
             <!-- Comparison Table -->
             <h2>Model Performance Comparison</h2>
@@ -229,16 +232,29 @@
 
     <script>
         const API_BASE = 'https://postposted-spent-knife-given.trycloudflare.com';
-
+        
         async function fetchModels() {
             try {
                 const response = await fetch(`${API_BASE}/api/models`);
                 if (!response.ok) throw new Error('API request failed');
                 const data = await response.json();
+                updateAPIStatus(true);
                 return data.models;
             } catch (error) {
-                console.error('Error:', error);
+                console.error('Error fetching models:', error);
+                updateAPIStatus(false);
                 return null;
+            }
+        }
+
+        function updateAPIStatus(connected) {
+            const statusEl = document.getElementById('api-status');
+            if (connected) {
+                statusEl.textContent = '● Backend Connected';
+                statusEl.style.color = 'var(--color-success)';
+            } else {
+                statusEl.textContent = '● Backend Disconnected';
+                statusEl.style.color = 'var(--color-error)';
             }
         }
 
@@ -269,49 +285,49 @@
         function renderModelCard(model) {
             const pnlClass = getPnLClass(model.total_pnl);
             const winRateColor = model.win_rate > 60 ? '#2E7D32' : model.win_rate > 50 ? '#E65100' : '#C62828';
-
+            
             return `
                 <div class="model-card ${model.model}">
                     <div class="model-header">
                         <div class="model-name ${model.model}">${model.model}</div>
                         <div class="model-badge">Probability Model</div>
                     </div>
-
+                    
                     <div class="stat-row">
                         <span class="stat-label">Total P&L</span>
                         <span class="stat-value ${pnlClass}">${formatPnL(model.total_pnl)}</span>
                     </div>
-
+                    
                     <div class="stat-row">
                         <span class="stat-label">Total Predictions</span>
                         <span class="stat-value">${model.total_trades}</span>
                     </div>
-
+                    
                     <div class="stat-row">
                         <span class="stat-label">Accuracy Rate</span>
                         <span class="stat-value" style="color: ${winRateColor}">${model.win_rate.toFixed(1)}%</span>
                     </div>
-
+                    
                     <div class="stat-row">
                         <span class="stat-label">Wins / Losses</span>
                         <span class="stat-value">${model.winners} / ${model.losers}</span>
                     </div>
-
+                    
                     <div class="stat-row">
                         <span class="stat-label">Open Positions</span>
                         <span class="stat-value">${model.open_positions}</span>
                     </div>
-
+                    
                     <div class="stat-row">
                         <span class="stat-label">Avg P&L</span>
                         <span class="stat-value ${getPnLClass(model.avg_pnl)}">${formatPnL(model.avg_pnl)}</span>
                     </div>
-
+                    
                     <div class="stat-row">
                         <span class="stat-label">Today Predictions</span>
                         <span class="stat-value">${model.today_trades}</span>
                     </div>
-
+                    
                     <div class="stat-row">
                         <span class="stat-label">Today P&L</span>
                         <span class="stat-value ${getPnLClass(model.today_pnl)}">${formatPnL(model.today_pnl)}</span>
@@ -324,12 +340,12 @@
             if (!data || !data.models) return;
 
             const sorted = [...data.models].sort((a, b) => b.total_pnl - a.total_pnl);
-
+            
             const rows = sorted.map((model, index) => {
                 const rank = index + 1;
                 const rankBadge = `<span class="rank-badge rank-${rank}">#${rank}</span>`;
                 const pnlClass = getPnLClass(model.total_pnl);
-
+                
                 return `
                     <tr>
                         <td>${rankBadge}</td>
@@ -343,33 +359,38 @@
                     </tr>
                 `;
             }).join('');
-
+            
             document.getElementById('comparison-table').getElementsByTagName('tbody')[0].innerHTML = rows;
         }
 
         async function updateDashboard() {
+            console.log('Fetching dashboard data from:', API_BASE);
             const models = await fetchModels();
             const comparison = await fetchComparison();
-
+            
             if (models) {
+                console.log('Models data:', models);
                 const grid = document.getElementById('models-grid');
                 grid.innerHTML = models.map(renderModelCard).join('');
-
+                
                 const totalTrades = models.reduce((sum, m) => sum + m.total_trades, 0);
                 const totalPnL = models.reduce((sum, m) => sum + m.total_pnl, 0);
                 const todayPnL = models.reduce((sum, m) => sum + m.today_pnl, 0);
-
+                
                 document.getElementById('total-trades').textContent = totalTrades;
                 document.getElementById('total-pnl').textContent = formatPnL(totalPnL);
                 document.getElementById('total-pnl').className = getPnLClass(totalPnL);
                 document.getElementById('today-pnl').textContent = formatPnL(todayPnL);
                 document.getElementById('today-pnl').className = getPnLClass(todayPnL);
+            } else {
+                console.error('Failed to fetch models data');
             }
-
+            
             if (comparison) {
+                console.log('Comparison data:', comparison);
                 renderComparison(comparison);
             }
-
+            
             const now = new Date();
             document.getElementById('last-update').textContent = now.toLocaleTimeString();
         }
