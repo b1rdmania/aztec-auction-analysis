@@ -5,15 +5,20 @@ Multi-Model Dashboard API
 FastAPI backend that serves trading data for the web dashboard.
 """
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 import sqlite3
 from pathlib import Path
 from datetime import datetime, timedelta
-from typing import List, Dict
+from typing import List, Dict, Optional
 import json
+import httpx
+import os
+from openai import OpenAI
+import numpy as np
 
 app = FastAPI(title="Polymarket Trading Dashboard")
 
@@ -28,6 +33,20 @@ app.add_middleware(
 
 BASE_DIR = Path(__file__).parent.parent
 MODELS = ['conservative', 'moderate', 'aggressive']
+
+# Initialize OpenAI client
+openai_client = None
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+if OPENAI_API_KEY:
+    openai_client = OpenAI(api_key=OPENAI_API_KEY)
+
+# Polymarket API endpoints
+CLOB_API = "https://clob.polymarket.com"
+GAMMA_API = "https://gamma-api.polymarket.com"
+
+# Cache for embeddings
+EMBEDDINGS_CACHE_PATH = BASE_DIR / 'data' / 'embeddings_cache.json'
+embeddings_cache = {}
 
 
 def get_model_stats(model_name: str) -> Dict:
@@ -188,6 +207,392 @@ def get_recent_trades(model_name: str, limit: int = 20) -> List[Dict]:
     except Exception as e:
         return []
 
+
+# ============================================================================
+# LIVE SIGNAL FEED ENDPOINTS
+# ============================================================================
+
+@app.get("/api/signals/live")
+async def get_live_signals(limit: int = 50):
+    """Get recent signals from all models."""
+    all_signals = []
+    
+    for model in MODELS:
+        db_path = BASE_DIR / 'data' / f'trades_{model}.db'
+        if not db_path.exists():
+            continue
+            
+        try:
+            conn = sqlite3.connect(db_path)
+            cursor = conn.cursor()
+            
+            cursor.execute("""
+                SELECT 
+                    market_question,
+                    side,
+                    price,
+                    size,
+                    created_at,
+                    status,
+                    pnl
+                FROM trades
+                ORDER BY created_at DESC
+                LIMIT ?
+            """, (limit,))
+            
+            for row in cursor.fetchall():
+                all_signals.append({
+                    'model': model,
+                    'market': row[0],
+                    'direction': row[1],
+                    'entry_price': row[2],
+                    'size': row[3],
+                    'timestamp': row[4],
+                    'status': row[5],
+                    'pnl': row[6],
+                    'strength': 'STRONG' if model == 'conservative' else 'MODERATE' if model == 'moderate' else 'WEAK'
+                })
+            
+            conn.close()
+        except Exception as e:
+            print(f"Error fetching signals for {model}: {e}")
+            continue
+    
+    # Sort by timestamp descending
+    all_signals.sort(key=lambda x: x['timestamp'], reverse=True)
+    return {
+        'signals': all_signals[:limit],
+        'timestamp': datetime.now().isoformat()
+    }
+
+
+# ============================================================================
+# MARKET QUALITY SCORING ENDPOINTS
+# ============================================================================
+
+async def fetch_market_data(market_id: str) -> Optional[Dict]:
+    """Fetch market data from Polymarket."""
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(f"{GAMMA_API}/markets/{market_id}")
+            if response.status_code == 200:
+                return response.json()
+    except Exception as e:
+        print(f"Error fetching market {market_id}: {e}")
+    return None
+
+
+def calculate_quality_score(market: Dict) -> Dict:
+    """Calculate quality score for a market."""
+    # Liquidity score (0-35 points)
+    volume_24h = float(market.get('volume24hr', 0))
+    liquidity_score = min(35, (volume_24h / 10000) * 35)  # Max at $10k volume
+    
+    # Spread score (0-25 points) - tighter is better
+    outcomes = market.get('outcomes', [])
+    if len(outcomes) >= 2:
+        best_bid = float(outcomes[0].get('price', 0.5))
+        best_ask = float(outcomes[1].get('price', 0.5))
+        spread_pct = abs(best_ask - best_bid) * 100
+        spread_score = max(0, 25 - (spread_pct * 5))  # Penalize wide spreads
+    else:
+        spread_score = 0
+    
+    # Activity score (0-15 points) - recent activity
+    activity_score = 15 if volume_24h > 1000 else (volume_24h / 1000) * 15
+    
+    # Clarity score (0-25 points) - question length and simplicity
+    question = market.get('question', '')
+    question_len = len(question)
+    if 20 < question_len < 100:
+        clarity_score = 25
+    elif question_len > 150:
+        clarity_score = 10
+    else:
+        clarity_score = 15
+    
+    total_score = liquidity_score + spread_score + activity_score + clarity_score
+    
+    # Assign grade
+    if total_score >= 85:
+        grade = 'A+'
+    elif total_score >= 75:
+        grade = 'A'
+    elif total_score >= 65:
+        grade = 'B'
+    elif total_score >= 50:
+        grade = 'C'
+    else:
+        grade = 'D'
+    
+    return {
+        'total_score': round(total_score, 1),
+        'grade': grade,
+        'liquidity_score': round(liquidity_score, 1),
+        'spread_score': round(spread_score, 1),
+        'activity_score': round(activity_score, 1),
+        'clarity_score': round(clarity_score, 1),
+        'volume_24h': volume_24h
+    }
+
+
+@app.get("/api/quality/top-markets")
+async def get_top_quality_markets(limit: int = 20):
+    """Get highest quality markets for trading."""
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            response = await client.get(f"{CLOB_API}/markets")
+            if response.status_code != 200:
+                return {'error': 'Failed to fetch markets', 'markets': []}
+            
+            markets = response.json()[:50]  # Analyze top 50
+            
+            scored_markets = []
+            for market in markets:
+                quality = calculate_quality_score(market)
+                scored_markets.append({
+                    'market_id': market.get('condition_id', ''),
+                    'question': market.get('question', ''),
+                    'quality': quality,
+                    'price': float(market.get('outcomes', [{}])[0].get('price', 0)),
+                    'volume_24h': quality['volume_24h']
+                })
+            
+            # Sort by score
+            scored_markets.sort(key=lambda x: x['quality']['total_score'], reverse=True)
+            
+            return {
+                'markets': scored_markets[:limit],
+                'timestamp': datetime.now().isoformat()
+            }
+    except Exception as e:
+        return {'error': str(e), 'markets': []}
+
+
+# ============================================================================
+# AI MARKET INSIGHTS ENDPOINTS
+# ============================================================================
+
+class MarketAnalysisRequest(BaseModel):
+    market_question: str
+    current_price: Optional[float] = None
+
+
+@app.post("/api/ai/analyze-market")
+async def analyze_market_with_ai(request: MarketAnalysisRequest):
+    """Analyze a market question using AI."""
+    if not openai_client:
+        return {'error': 'OpenAI API not configured', 'analysis': None}
+    
+    try:
+        # Generate embedding
+        embedding_response = openai_client.embeddings.create(
+            model="text-embedding-3-small",
+            input=request.market_question
+        )
+        embedding = embedding_response.data[0].embedding
+        
+        # Use GPT-4 to analyze the market
+        analysis_prompt = f"""Analyze this prediction market question for trading opportunities:
+
+Question: {request.market_question}
+Current Price: {request.current_price if request.current_price else 'Unknown'}¢
+
+Provide:
+1. AI Confidence Score (0-100): How confident are you in predicting the outcome?
+2. Risk Factors: List 2-3 specific risks (ambiguity, external events, etc.)
+3. Probability Assessment: Your estimated probability of YES outcome
+4. Key Reasoning: 2-3 sentences explaining your analysis
+
+Format as JSON:
+{{"confidence": <number>, "risk_factors": [<strings>], "probability": <number>, "reasoning": "<string>"}}"""
+        
+        completion = openai_client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": analysis_prompt}],
+            response_format={"type": "json_object"},
+            temperature=0.3
+        )
+        
+        analysis = json.loads(completion.choices[0].message.content)
+        
+        return {
+            'analysis': analysis,
+            'embedding_generated': True,
+            'embedding_dimension': len(embedding),
+            'timestamp': datetime.now().isoformat()
+        }
+    except Exception as e:
+        return {'error': str(e), 'analysis': None}
+
+
+# ============================================================================
+# RESOLUTION TRACKER ENDPOINTS
+# ============================================================================
+
+@app.get("/api/resolution/recent")
+async def get_recent_resolutions(limit: int = 20):
+    """Get recently resolved markets."""
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            response = await client.get(f"{CLOB_API}/markets?closed=true")
+            if response.status_code != 200:
+                return {'resolutions': [], 'error': 'Failed to fetch'}
+            
+            markets = response.json()[:limit]
+            
+            resolutions = []
+            for market in markets:
+                # Check if we traded this market
+                our_prediction = None
+                outcome = None
+                
+                for model in MODELS:
+                    db_path = BASE_DIR / 'data' / f'trades_{model}.db'
+                    if db_path.exists():
+                        try:
+                            conn = sqlite3.connect(db_path)
+                            cursor = conn.cursor()
+                            cursor.execute("""
+                                SELECT side, price, pnl, status 
+                                FROM trades 
+                                WHERE market_question LIKE ? 
+                                LIMIT 1
+                            """, (f"%{market.get('question', '')[:30]}%",))
+                            
+                            row = cursor.fetchone()
+                            if row:
+                                our_prediction = {
+                                    'model': model,
+                                    'side': row[0],
+                                    'price': row[1],
+                                    'pnl': row[2],
+                                    'status': row[3]
+                                }
+                            conn.close()
+                        except:
+                            pass
+                
+                resolutions.append({
+                    'question': market.get('question', ''),
+                    'market_id': market.get('condition_id', ''),
+                    'closed': market.get('closed', False),
+                    'our_prediction': our_prediction,
+                    'volume': float(market.get('volume', 0))
+                })
+            
+            return {
+                'resolutions': resolutions,
+                'timestamp': datetime.now().isoformat()
+            }
+    except Exception as e:
+        return {'resolutions': [], 'error': str(e)}
+
+
+@app.get("/api/resolution/accuracy")
+async def get_resolution_accuracy():
+    """Calculate AI model accuracy on resolved markets."""
+    total_resolved = 0
+    correct_predictions = 0
+    
+    for model in MODELS:
+        db_path = BASE_DIR / 'data' / f'trades_{model}.db'
+        if not db_path.exists():
+            continue
+        
+        try:
+            conn = sqlite3.connect(db_path)
+            cursor = conn.cursor()
+            
+            cursor.execute("""
+                SELECT COUNT(*), SUM(CASE WHEN pnl > 0 THEN 1 ELSE 0 END)
+                FROM trades 
+                WHERE status = 'CLOSED'
+            """)
+            
+            row = cursor.fetchone()
+            if row[0]:
+                total_resolved += row[0]
+                correct_predictions += row[1] or 0
+            
+            conn.close()
+        except:
+            pass
+    
+    accuracy = (correct_predictions / total_resolved * 100) if total_resolved > 0 else 0
+    
+    return {
+        'accuracy': round(accuracy, 1),
+        'total_resolved': total_resolved,
+        'correct_predictions': correct_predictions,
+        'timestamp': datetime.now().isoformat()
+    }
+
+
+# ============================================================================
+# VECTOR SEARCH / SEMANTIC SIMILARITY ENDPOINTS
+# ============================================================================
+
+@app.post("/api/vector/search")
+async def semantic_search(query: str, limit: int = 10):
+    """Find similar markets using semantic search."""
+    if not openai_client:
+        return {'error': 'OpenAI API not configured', 'results': []}
+    
+    try:
+        # Generate embedding for query
+        embedding_response = openai_client.embeddings.create(
+            model="text-embedding-3-small",
+            input=query
+        )
+        query_embedding = np.array(embedding_response.data[0].embedding)
+        
+        # Fetch active markets and compute similarity
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            response = await client.get(f"{CLOB_API}/markets")
+            if response.status_code != 200:
+                return {'results': [], 'error': 'Failed to fetch markets'}
+            
+            markets = response.json()[:50]  # Top 50 markets
+            
+            results = []
+            for market in markets:
+                question = market.get('question', '')
+                
+                # Generate embedding for market question
+                market_embedding_response = openai_client.embeddings.create(
+                    model="text-embedding-3-small",
+                    input=question
+                )
+                market_embedding = np.array(market_embedding_response.data[0].embedding)
+                
+                # Compute cosine similarity
+                similarity = np.dot(query_embedding, market_embedding) / (
+                    np.linalg.norm(query_embedding) * np.linalg.norm(market_embedding)
+                )
+                
+                results.append({
+                    'question': question,
+                    'market_id': market.get('condition_id', ''),
+                    'similarity': float(similarity),
+                    'price': float(market.get('outcomes', [{}])[0].get('price', 0))
+                })
+            
+            # Sort by similarity
+            results.sort(key=lambda x: x['similarity'], reverse=True)
+            
+            return {
+                'query': query,
+                'results': results[:limit],
+                'timestamp': datetime.now().isoformat()
+            }
+    except Exception as e:
+        return {'error': str(e), 'results': []}
+
+
+# ============================================================================
+# EXISTING ENDPOINTS
+# ============================================================================
 
 @app.get("/api/models")
 async def get_all_models():

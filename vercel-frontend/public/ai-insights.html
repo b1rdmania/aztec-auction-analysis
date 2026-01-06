@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Market Insights | Polymarket AI Trading Protocol</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📊</text></svg>">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+            background: #0D1117;
+            color: #E8EAED;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            margin-bottom: 40px;
+            border-bottom: 1px solid #252A41;
+            padding-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #E8EAED;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: #9AA0A6;
+            margin-bottom: 24px;
+        }
+
+        .main-nav {
+            display: flex;
+            gap: 24px;
+            margin-top: 20px;
+        }
+
+        .nav-item {
+            text-decoration: none;
+            color: #9AA0A6;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 8px 0;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .nav-item:hover {
+            color: #E8EAED;
+        }
+
+        .nav-item.active {
+            color: #1A73E8;
+            border-bottom-color: #1A73E8;
+        }
+
+        .analyzer-section {
+            background: #161B33;
+            border: 1px solid #252A41;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 32px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #E8EAED;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #9AA0A6;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .market-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: #0D1117;
+            border: 1px solid #252A41;
+            border-radius: 6px;
+            color: #E8EAED;
+            font-size: 15px;
+            font-family: inherit;
+        }
+
+        .market-input:focus {
+            outline: none;
+            border-color: #1A73E8;
+        }
+
+        .price-input {
+            width: 150px;
+            padding: 12px 16px;
+            background: #0D1117;
+            border: 1px solid #252A41;
+            border-radius: 6px;
+            color: #E8EAED;
+            font-size: 15px;
+            font-family: inherit;
+        }
+
+        .price-input:focus {
+            outline: none;
+            border-color: #1A73E8;
+        }
+
+        .analyze-btn {
+            padding: 12px 32px;
+            background: #1A73E8;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .analyze-btn:hover {
+            background: #1557B0;
+        }
+
+        .analyze-btn:disabled {
+            background: #252A41;
+            color: #9AA0A6;
+            cursor: not-allowed;
+        }
+
+        .results-section {
+            display: none;
+            margin-top: 32px;
+        }
+
+        .results-section.visible {
+            display: block;
+        }
+
+        .ai-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(26, 115, 232, 0.1);
+            border: 1px solid rgba(26, 115, 232, 0.3);
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #1A73E8;
+            margin-bottom: 24px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .metric-card {
+            background: #1F2544;
+            border: 1px solid #252A41;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .metric-label {
+            font-size: 12px;
+            color: #9AA0A6;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .metric-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #E8EAED;
+        }
+
+        .metric-value.high {
+            color: #34A853;
+        }
+
+        .metric-value.medium {
+            color: #F59E0B;
+        }
+
+        .metric-value.low {
+            color: #EA4335;
+        }
+
+        .analysis-box {
+            background: #1F2544;
+            border: 1px solid #252A41;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 16px;
+        }
+
+        .analysis-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1A73E8;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .analysis-content {
+            font-size: 14px;
+            color: #E8EAED;
+            line-height: 1.6;
+        }
+
+        .risk-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .risk-item {
+            padding: 8px 0;
+            border-bottom: 1px solid #252A41;
+            font-size: 14px;
+            color: #E8EAED;
+        }
+
+        .risk-item:last-child {
+            border-bottom: none;
+        }
+
+        .risk-item::before {
+            content: "⚠️";
+            margin-right: 8px;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #252A41;
+            border-top-color: #1A73E8;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .vector-info {
+            background: #1F2544;
+            border: 1px solid #252A41;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 24px;
+        }
+
+        .vector-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1A73E8;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .vector-text {
+            font-size: 13px;
+            color: #9AA0A6;
+        }
+
+        .similar-markets {
+            margin-top: 32px;
+        }
+
+        .similar-market-card {
+            background: #1F2544;
+            border: 1px solid #252A41;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .similar-market-question {
+            flex: 1;
+            font-size: 14px;
+            color: #E8EAED;
+            margin-right: 16px;
+        }
+
+        .similarity-score {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1A73E8;
+            padding: 4px 12px;
+            background: rgba(26, 115, 232, 0.1);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AI Market Insights</h1>
+            <p class="subtitle">Real-time AI analysis using OpenAI embeddings and GPT-4 reasoning</p>
+            <nav class="main-nav">
+                <a href="index.html" class="nav-item">Dashboard</a>
+                <a href="signals.html" class="nav-item">Signals</a>
+                <a href="ai-insights.html" class="nav-item active">AI Insights</a>
+                <a href="quality.html" class="nav-item">Quality Scoring</a>
+                <a href="resolution.html" class="nav-item">Resolution</a>
+                <a href="about.html" class="nav-item">Strategy</a>
+            </nav>
+        </header>
+
+        <div class="analyzer-section">
+            <div class="section-title">Analyze Market Question</div>
+            
+            <div class="input-group">
+                <label class="input-label">Market Question</label>
+                <textarea 
+                    class="market-input" 
+                    id="market-question" 
+                    rows="3" 
+                    placeholder="Enter a prediction market question (e.g., 'Will Trump win the 2024 election?')"
+                ></textarea>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label">Current Price (Optional)</label>
+                <input 
+                    type="number" 
+                    class="price-input" 
+                    id="current-price" 
+                    placeholder="e.g., 65"
+                    min="0"
+                    max="100"
+                    step="0.1"
+                />
+                <span style="color: #9AA0A6; font-size: 13px; margin-left: 8px;">¢</span>
+            </div>
+
+            <button class="analyze-btn" id="analyze-btn" onclick="analyzeMarket()">
+                Analyze with AI
+            </button>
+
+            <div class="results-section" id="results-section">
+                <div class="ai-badge">
+                    <span>🤖</span>
+                    <span>AI Analysis Generated</span>
+                </div>
+
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">AI Confidence</div>
+                        <div class="metric-value" id="confidence-value">-</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Probability</div>
+                        <div class="metric-value" id="probability-value">-</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Embedding Dimension</div>
+                        <div class="metric-value" style="font-size: 24px;" id="embedding-dim">-</div>
+                    </div>
+                </div>
+
+                <div class="analysis-box">
+                    <div class="analysis-title">AI Reasoning</div>
+                    <div class="analysis-content" id="reasoning-content">
+                        -
+                    </div>
+                </div>
+
+                <div class="analysis-box">
+                    <div class="analysis-title">Risk Factors</div>
+                    <ul class="risk-list" id="risk-list">
+                        <li class="risk-item">Loading...</li>
+                    </ul>
+                </div>
+
+                <div class="vector-info">
+                    <div class="vector-title">Vector Embedding Generated</div>
+                    <div class="vector-text">
+                        This market question has been converted into a 1536-dimensional vector embedding using OpenAI's text-embedding-3-small model. 
+                        This enables semantic search and similarity matching with other markets in the vector space.
+                    </div>
+                </div>
+
+                <div class="similar-markets">
+                    <div class="section-title">Find Similar Markets</div>
+                    <button class="analyze-btn" onclick="findSimilar()" id="similar-btn">
+                        Search Vector Database
+                    </button>
+                    <div id="similar-results" style="margin-top: 20px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://turtle-proved-thereby-gateway.trycloudflare.com';
+
+        async function analyzeMarket() {
+            const question = document.getElementById('market-question').value.trim();
+            const price = document.getElementById('current-price').value;
+            const btn = document.getElementById('analyze-btn');
+
+            if (!question) {
+                alert('Please enter a market question');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading-spinner"></span> Analyzing...';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/ai/analyze-market`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        market_question: question,
+                        current_price: price ? parseFloat(price) : null
+                    })
+                });
+
+                if (!response.ok) throw new Error('Analysis failed');
+                const data = await response.json();
+
+                if (data.error) {
+                    alert('Error: ' + data.error);
+                    return;
+                }
+
+                displayResults(data);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to analyze market. Please try again.');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Analyze with AI';
+            }
+        }
+
+        function displayResults(data) {
+            const analysis = data.analysis;
+            
+            // Show results section
+            document.getElementById('results-section').classList.add('visible');
+
+            // Update confidence
+            const confidence = analysis.confidence;
+            const confidenceEl = document.getElementById('confidence-value');
+            confidenceEl.textContent = confidence + '%';
+            confidenceEl.className = 'metric-value ' + 
+                (confidence >= 70 ? 'high' : confidence >= 50 ? 'medium' : 'low');
+
+            // Update probability
+            const probability = analysis.probability;
+            const probabilityEl = document.getElementById('probability-value');
+            probabilityEl.textContent = probability + '%';
+
+            // Update embedding dimension
+            document.getElementById('embedding-dim').textContent = data.embedding_dimension || 1536;
+
+            // Update reasoning
+            document.getElementById('reasoning-content').textContent = analysis.reasoning;
+
+            // Update risk factors
+            const riskList = document.getElementById('risk-list');
+            riskList.innerHTML = analysis.risk_factors.map(risk => 
+                `<li class="risk-item">${risk}</li>`
+            ).join('');
+
+            // Scroll to results
+            document.getElementById('results-section').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        async function findSimilar() {
+            const question = document.getElementById('market-question').value.trim();
+            const btn = document.getElementById('similar-btn');
+            const resultsDiv = document.getElementById('similar-results');
+
+            if (!question) {
+                alert('Please analyze a market first');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading-spinner"></span> Searching...';
+            resultsDiv.innerHTML = '<div style="color: #9AA0A6; text-align: center; padding: 20px;">Searching vector space...</div>';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/vector/search`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ query: question })
+                });
+
+                if (!response.ok) throw new Error('Search failed');
+                const data = await response.json();
+
+                if (data.error) {
+                    resultsDiv.innerHTML = `<div style="color: #EA4335; padding: 20px;">Error: ${data.error}</div>`;
+                    return;
+                }
+
+                displaySimilarMarkets(data.results);
+            } catch (error) {
+                console.error('Error:', error);
+                resultsDiv.innerHTML = '<div style="color: #EA4335; padding: 20px;">Search failed. Please try again.</div>';
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Search Vector Database';
+            }
+        }
+
+        function displaySimilarMarkets(results) {
+            const resultsDiv = document.getElementById('similar-results');
+            
+            if (results.length === 0) {
+                resultsDiv.innerHTML = '<div style="color: #9AA0A6; padding: 20px;">No similar markets found</div>';
+                return;
+            }
+
+            resultsDiv.innerHTML = results.slice(0, 5).map(result => `
+                <div class="similar-market-card">
+                    <div class="similar-market-question">${result.question}</div>
+                    <div class="similarity-score">${(result.similarity * 100).toFixed(1)}% match</div>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>
+
