@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Concept | Emotional Volatility Arbitrage</title>
+    <title>Trading Strategy | Platform</title>
     <style>
         * {
             margin: 0;
@@ -12,85 +12,81 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #333;
-            padding: 20px;
-            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0A0E27;
+            color: #E8EAED;
+            line-height: 1.6;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
+            padding: 20px;
         }
 
         header {
-            background: white;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
+            background: #161B33;
+            padding: 24px 32px;
+            border-bottom: 1px solid #252A41;
+            margin-bottom: 24px;
         }
 
         h1 {
-            font-size: 2.5em;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
+            font-size: 24px;
+            font-weight: 600;
+            color: #FFFFFF;
+            margin-bottom: 4px;
         }
 
         .subtitle {
-            color: #666;
-            font-size: 1.1em;
+            color: #9AA0A6;
+            font-size: 14px;
         }
 
         nav {
-            background: white;
-            padding: 15px 30px;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
+            background: #161B33;
+            padding: 12px 32px;
+            border-bottom: 1px solid #252A41;
+            margin-bottom: 24px;
             display: flex;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
         }
 
         nav a {
-            padding: 10px 20px;
-            border-radius: 10px;
+            padding: 8px 16px;
             text-decoration: none;
-            color: #667eea;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
+            color: #9AA0A6;
+            font-weight: 500;
+            font-size: 14px;
+            border-radius: 6px;
+            transition: all 0.2s;
         }
 
         nav a:hover {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-color: #667eea;
+            background: #1F2544;
+            color: #FFFFFF;
         }
 
         nav a.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: #1A73E8;
+            color: #FFFFFF;
         }
 
         .content {
-            background: white;
-            border-radius: 20px;
+            background: #161B33;
+            border: 1px solid #252A41;
+            border-radius: 8px;
             padding: 40px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-            line-height: 1.8;
         }
 
         h2 {
-            color: #667eea;
-            font-size: 2em;
-            margin: 30px 0 20px 0;
-            padding-top: 20px;
-            border-top: 2px solid #f0f0f0;
+            color: #FFFFFF;
+            font-size: 20px;
+            font-weight: 600;
+            margin: 32px 0 16px 0;
+            padding-top: 16px;
+            border-top: 1px solid #252A41;
         }
 
         h2:first-child {
@@ -100,216 +96,223 @@
         }
 
         h3 {
-            color: #764ba2;
-            font-size: 1.5em;
-            margin: 20px 0 15px 0;
+            color: #E8EAED;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 24px 0 12px 0;
+        }
+
+        p {
+            color: #BDC1C6;
+            margin-bottom: 16px;
         }
 
         .highlight-box {
-            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
-            border-left: 4px solid #667eea;
-            padding: 25px;
-            margin: 25px 0;
-            border-radius: 10px;
+            background: #1F2544;
+            border-left: 3px solid #1A73E8;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
         }
 
         .highlight-box strong {
-            color: #667eea;
-            font-size: 1.2em;
+            color: #FFFFFF;
         }
 
         ul {
-            margin: 15px 0 15px 30px;
+            margin: 12px 0 12px 24px;
+            color: #BDC1C6;
         }
 
         li {
-            margin: 10px 0;
+            margin: 8px 0;
         }
 
         .strategy-card {
-            background: #f8fafc;
+            background: #1F2544;
             padding: 20px;
-            border-radius: 15px;
-            margin: 15px 0;
-            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            margin: 16px 0;
+            border: 1px solid #252A41;
         }
 
         .strategy-card h4 {
-            color: #667eea;
-            margin-bottom: 10px;
-            font-size: 1.3em;
+            color: #FFFFFF;
+            margin-bottom: 12px;
+            font-size: 15px;
+            font-weight: 600;
         }
 
-        .example {
-            background: #fef3c7;
-            padding: 20px;
-            border-radius: 10px;
+        table {
+            width: 100%;
+            border-collapse: collapse;
             margin: 20px 0;
-            border-left: 4px solid #f59e0b;
         }
 
-        .example strong {
-            color: #92400e;
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid #252A41;
+        }
+
+        th {
+            background: #1F2544;
+            color: #9AA0A6;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            color: #BDC1C6;
+        }
+
+        tr:hover {
+            background: #1F2544;
         }
 
         @media (max-width: 768px) {
-            h1 {
-                font-size: 1.8em;
-            }
-            
-            .content {
-                padding: 25px;
-            }
+            h1 { font-size: 20px; }
+            .content { padding: 24px; }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>💡 The Concept</h1>
-            <p class="subtitle">Trading Emotional Volatility in Prediction Markets</p>
+            <h1>Trading Strategy</h1>
+            <p class="subtitle">Mean reversion in prediction markets</p>
         </header>
 
         <nav>
-            <a href="index.html">📊 Dashboard</a>
-            <a href="about.html" class="active">💡 Concept</a>
-            <a href="research.html">📚 Research</a>
-            <a href="system.html">⚙️ System</a>
-            <a href="theory.html">🔬 Theory</a>
+            <a href="index.html">Dashboard</a>
+            <a href="about.html" class="active">Strategy</a>
+            <a href="research.html">Research</a>
+            <a href="system.html">System</a>
+            <a href="theory.html">Models</a>
         </nav>
 
         <div class="content">
             <div class="highlight-box">
-                <strong>Core Thesis:</strong> Prediction markets exhibit systematic emotional volatility that creates exploitable arbitrage opportunities through mean reversion strategies.
+                <strong>Core thesis:</strong> Prediction markets show systematic emotional volatility. This creates exploitable arbitrage through mean reversion.
             </div>
 
-            <h2>🧠 What is Emotional Volatility Arbitrage?</h2>
+            <h2>Approach</h2>
             <p>
-                Prediction markets like Polymarket are dominated by retail traders who make decisions based on emotion, recency bias, and partisan beliefs rather than statistical reasoning. This creates predictable patterns of <strong>overreaction and subsequent correction</strong> that can be systematically exploited.
+                Prediction markets are dominated by retail traders who make decisions based on emotion and recent events rather than statistics. This creates predictable patterns of overreaction and subsequent correction.
             </p>
 
-            <h3>The Core Mechanism</h3>
-            <p>
-                When news breaks or sentiment shifts rapidly, traders overreact:
-            </p>
+            <h3>Mechanism</h3>
+            <p>When news breaks or sentiment shifts rapidly:</p>
             <ul>
-                <li><strong>Positive news</strong> → Rush to buy → Prices spike above fair value</li>
-                <li><strong>Negative news</strong> → Panic selling → Prices crash below fair value</li>
-                <li><strong>Time passes</strong> → Emotions fade → Prices revert to fundamentals</li>
+                <li>Positive news drives buying, prices spike above fair value</li>
+                <li>Negative news drives selling, prices crash below fair value</li>
+                <li>Time passes, emotions fade, prices revert to fundamentals</li>
             </ul>
 
-            <div class="example">
-                <strong>Example:</strong> A candidate says something controversial in a debate. Their election odds drop from 65% to 48% in minutes. But historical data shows debate performance has minimal correlation with election outcomes. Within 48 hours, the price reverts to 62%. <strong>That 14-point swing is pure emotion.</strong>
-            </div>
-
-            <h2>📈 Our Trading Strategy</h2>
             <p>
-                We run <strong>three parallel models</strong> with different risk profiles, all based on the same core principle: <em>fade emotional extremes</em>.
+                Example: A candidate makes a controversial statement in a debate. Their election probability drops from 65% to 48% in minutes. Historical data shows debate performance has minimal correlation with election outcomes. Within 48 hours, the price reverts to 62%. That 14-point swing is pure emotion.
             </p>
 
-            <div class="strategy-card">
-                <h4>🔵 Conservative Model</h4>
-                <p><strong>Philosophy:</strong> Only trade the most extreme, obvious overreactions</p>
-                <ul>
-                    <li>Min signal strength: STRONG</li>
-                    <li>Max position: $200</li>
-                    <li>Kelly fraction: 0.15 (very conservative)</li>
-                    <li>Target: High win rate, lower frequency</li>
-                </ul>
-            </div>
+            <h2>Three Models</h2>
+            <p>We run three parallel models with different risk profiles. All use the same principle: fade emotional extremes.</p>
 
-            <div class="strategy-card">
-                <h4>🟣 Moderate Model</h4>
-                <p><strong>Philosophy:</strong> Balanced approach with reasonable selectivity</p>
-                <ul>
-                    <li>Min signal strength: MODERATE</li>
-                    <li>Max position: $500</li>
-                    <li>Kelly fraction: 0.25 (quarter Kelly)</li>
-                    <li>Target: Balanced risk/reward</li>
-                </ul>
-            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Model</th>
+                        <th>Min Signal</th>
+                        <th>Max Position</th>
+                        <th>Kelly Fraction</th>
+                        <th>Philosophy</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Conservative</strong></td>
+                        <td>Strong</td>
+                        <td>$200</td>
+                        <td>0.15</td>
+                        <td>Trade only extreme overreactions</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Moderate</strong></td>
+                        <td>Moderate</td>
+                        <td>$500</td>
+                        <td>0.25</td>
+                        <td>Balanced risk and frequency</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Aggressive</strong></td>
+                        <td>Weak</td>
+                        <td>$800</td>
+                        <td>0.35</td>
+                        <td>Higher frequency, more opportunities</td>
+                    </tr>
+                </tbody>
+            </table>
 
-            <div class="strategy-card">
-                <h4>🔴 Aggressive Model</h4>
-                <p><strong>Philosophy:</strong> Higher frequency, more opportunities</p>
-                <ul>
-                    <li>Min signal strength: WEAK (takes more signals)</li>
-                    <li>Max position: $800</li>
-                    <li>Kelly fraction: 0.35</li>
-                    <li>Target: Higher volume, accepts lower edge</li>
-                </ul>
-            </div>
+            <h2>Why This Works</h2>
 
-            <h2>🎯 Why This Works</h2>
-
-            <h3>1. Behavioral Finance Foundations</h3>
-            <p>
-                Decades of research show retail traders consistently:
-            </p>
+            <h3>1. Behavioral Finance</h3>
+            <p>Decades of research show retail traders consistently:</p>
             <ul>
-                <li><strong>Overreact to recent information</strong> (recency bias)</li>
-                <li><strong>Overvalue extreme probabilities</strong> (longshot bias)</li>
-                <li><strong>Hold partisan beliefs</strong> that distort their probability assessments</li>
-                <li><strong>Chase momentum</strong> and create self-reinforcing spirals</li>
+                <li>Overreact to recent information</li>
+                <li>Overvalue extreme probabilities</li>
+                <li>Let partisan beliefs distort probability assessments</li>
+                <li>Chase momentum and create self-reinforcing spirals</li>
             </ul>
 
-            <h3>2. Market Structure Advantages</h3>
+            <h3>2. Market Structure</h3>
             <ul>
-                <li><strong>No professional market makers</strong> to arbitrage away inefficiencies</li>
-                <li><strong>Retail-dominated</strong> participant base (86.4% lose money on Polymarket)</li>
-                <li><strong>Low capital requirements</strong> prevent large institutions from entering</li>
-                <li><strong>Political markets</strong> especially irrational due to partisan emotions</li>
+                <li>No professional market makers to arbitrage away inefficiencies</li>
+                <li>Retail-dominated participant base (86.4% lose money on Polymarket)</li>
+                <li>Low capital requirements prevent large institutions from entering</li>
+                <li>Political markets especially irrational due to partisan emotions</li>
             </ul>
 
             <h3>3. Mean Reversion at Specific Horizons</h3>
             <p>
-                Berg & Rietz (2018) found that prediction market mispricing mean-reverts most strongly at <strong>7-21 day horizons</strong>. This is our sweet spot:
+                Berg and Rietz (2018) found that prediction market mispricing mean-reverts most strongly at 7-21 day horizons. This is our target range.
             </p>
+
+            <h2>What We Avoid</h2>
+            <p>This is not:</p>
             <ul>
-                <li>Too short (&lt;3 days): Noise dominates, hard to profit</li>
-                <li>Just right (7-21 days): Emotional overreactions correct</li>
-                <li>Too long (&gt;30 days): New information dominates, reversion less reliable</li>
+                <li>Trying to predict election outcomes better than polls</li>
+                <li>Fundamental analysis or political forecasting</li>
+                <li>Long-term position taking</li>
+                <li>Following "smart money" or whale traders</li>
             </ul>
 
-            <h2>🎲 What We're NOT Doing</h2>
+            <p style="margin-top: 16px;">This is:</p>
+            <ul>
+                <li>Statistical arbitrage of emotional volatility</li>
+                <li>Systematic mean reversion trading</li>
+                <li>Fading crowd psychology at extremes</li>
+                <li>Risk-managed position sizing using Kelly Criterion</li>
+            </ul>
 
-            <div class="highlight-box">
-                <p><strong>This is NOT:</strong></p>
-                <ul>
-                    <li>❌ Trying to predict election outcomes better than polls</li>
-                    <li>❌ Fundamental analysis or political forecasting</li>
-                    <li>❌ Long-term position taking</li>
-                    <li>❌ Following "smart money" or whale traders</li>
-                </ul>
-                <p style="margin-top: 15px;"><strong>This IS:</strong></p>
-                <ul>
-                    <li>✅ Statistical arbitrage of emotional volatility</li>
-                    <li>✅ Systematic mean reversion trading</li>
-                    <li>✅ Fading crowd psychology at extremes</li>
-                    <li>✅ Risk-managed position sizing (Kelly Criterion)</li>
-                </ul>
-            </div>
-
-            <h2>⏱️ The 30-Day Validation</h2>
+            <h2>Validation</h2>
             <p>
-                We're currently running all three models in <strong>paper trading mode</strong> for 30 days to:
+                We are running all three models in paper trading mode for 30 days to:
             </p>
             <ul>
-                <li>Validate the strategy works in live markets (not just backtests)</li>
+                <li>Validate the strategy works in live markets</li>
                 <li>Determine which risk profile performs best</li>
                 <li>Measure real-world slippage and execution costs</li>
                 <li>Record live market data for future strategy improvements</li>
             </ul>
 
-            <p style="margin-top: 30px;">
-                After 30 days, we'll select the winning model and potentially deploy it with real capital. The beauty of this approach: <strong>let the data decide</strong> which parameters work best, rather than guessing.
+            <p style="margin-top: 24px;">
+                After 30 days, we select the winning model and potentially deploy with real capital. The data decides which parameters work best.
             </p>
 
-            <div class="highlight-box" style="margin-top: 40px;">
-                <strong>📊 <a href="index.html" style="color: #667eea;">View Live Dashboard</a></strong> to see how the models are performing in real-time.
+            <div class="highlight-box" style="margin-top: 32px;">
+                <a href="index.html" style="color: #1A73E8; text-decoration: none; font-weight: 600;">View live performance</a>
             </div>
         </div>
     </div>
 </body>
 </html>
-
