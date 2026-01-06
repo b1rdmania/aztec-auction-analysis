@@ -1,7 +1,0 @@
-{
-    "cleanUrls": true,
-    "outputDirectory": "dashboard",
-    "buildCommand": null,
-    "installCommand": null,
-    "framework": null
-}
